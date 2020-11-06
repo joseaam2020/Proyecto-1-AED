@@ -1,6 +1,8 @@
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
+
 public class Json {
     private static ObjectMapper mapper = getDefaultObjectMapper();
 
@@ -9,7 +11,7 @@ public class Json {
         return defaultObjectMapper;
     }
 
-    public static JsonNode parse(String jsonSource) {
-
+    public static JsonNode parse(String jsonSource) throws IOException {
+        return mapper.readTree(jsonSource);
     }
 }

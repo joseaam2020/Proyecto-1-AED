@@ -1,11 +1,11 @@
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -34,6 +34,7 @@ class PanelJuego extends JPanel implements Runnable{
     private JButton button0;
     private JButton button1;
     private JPanel menu;
+    private JPanel enviarDireccion;
     private Invitado direccion;
     private ServerSocket newSS;
     {
@@ -45,6 +46,9 @@ class PanelJuego extends JPanel implements Runnable{
     }
     private int puertoInt = newSS.getLocalPort();
     private String puertoString = String.valueOf(puertoInt);
+    private boolean enJuego = false;
+    private String ipAjeno;
+    private int puertoAjeno;
 
 
     public PanelJuego(){
@@ -73,8 +77,9 @@ class PanelJuego extends JPanel implements Runnable{
                 java.lang.String ipString = localIP.getHostAddress().toString();
                 JLabel ipAddress = new JLabel("Dirección IP:" + ipString);
                 JLabel puertoEnUso = new JLabel("Utilizando puerto:" + puertoString);
-                add(ipAddress);
-                add(puertoEnUso);
+                datos.add(ipAddress);
+                datos.add(puertoEnUso);
+                add(datos);
             } catch (UnknownHostException unknownHostException) {
                 unknownHostException.printStackTrace();
             }
@@ -89,19 +94,29 @@ class PanelJuego extends JPanel implements Runnable{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            remove(menu);
-            JLabel ipAddress = new JLabel("Dirección IP:");
-            add(ipAddress);
-            campoIP = new JTextField(20);
-            add(campoIP);
-            JLabel puertoDestinatario = new JLabel("Puerto:");
-            add(puertoDestinatario);
-            campoPuerto = new JTextField(20);
-            add(campoPuerto);
-            envioDireccion = new JButton("Enviar a anfitrión");
-            envioDireccion.addActionListener(new Enviar());
-            add(envioDireccion);
-            updateUI();
+            InetAddress localIP = null;
+            try {
+                enviarDireccion = new JPanel();
+                localIP = InetAddress.getLocalHost();
+                java.lang.String ipString = localIP.getHostAddress().toString();
+                String jsonString = "{ \"ipAddress\":\"" + ipString + "\",\"port\":" + puertoInt + "}";
+                remove(menu);
+                JLabel ipAddress = new JLabel("Dirección IP:");
+                enviarDireccion.add(ipAddress);
+                campoIP = new JTextField(20);
+                enviarDireccion.add(campoIP);
+                JLabel puertoDestinatario = new JLabel("Puerto:");
+                enviarDireccion.add(puertoDestinatario);
+                campoPuerto = new JTextField(20);
+                enviarDireccion.add(campoPuerto);
+                envioDireccion = new JButton("Enviar a anfitrión");
+                envioDireccion.addActionListener(new Enviar(jsonString));
+                enviarDireccion.add(envioDireccion);
+                add(enviarDireccion);
+                updateUI();
+            } catch (UnknownHostException unknownHostException) {
+                unknownHostException.printStackTrace();
+            }
         }
 
         public java.lang.String getIpAddress(){
@@ -115,12 +130,20 @@ class PanelJuego extends JPanel implements Runnable{
 
     private class Enviar implements ActionListener{
 
+        private String paquete ;
+
+        public Enviar(String nuevoPaquete){
+            paquete = nuevoPaquete;
+        }
+
         public void actionPerformed(ActionEvent e) {
             try {
                 int port = Integer.parseInt(direccion.getPuerto());
                 Socket newSocket = new Socket(direccion.getIpAddress(),port);
-                ObjectOutputStream output = new ObjectOutputStream(newSocket.getOutputStream());
+                DataOutputStream output = new DataOutputStream(newSocket.getOutputStream());
+                output.writeUTF(paquete);
                 output.close();
+                System.out.println("enviado");
             } catch (IOException ioException) {
                 System.out.println("Sending");
                 System.out.println(ioException.getMessage());
@@ -133,11 +156,21 @@ class PanelJuego extends JPanel implements Runnable{
 
 
     @Override
-    public void run() {
+    public synchronized void run() {
         try {
             while(true){
                 Socket inputSocket = newSS.accept();
                 DataInputStream input = new DataInputStream(inputSocket.getInputStream());
+                String stringRecibido = input.readUTF();
+                JsonNode jsonRecibido = Json.parse(stringRecibido);
+                if(jsonRecibido.has("ipAddress")){
+                    ipAjeno = jsonRecibido.get("ipAddress").asText();
+                    puertoAjeno = jsonRecibido.get("port").asInt();
+                    enJuego = true;
+                    System.out.println("hecho");
+                    removeAll();
+                    updateUI();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
