@@ -11,6 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+
 public class Juego {
     public static void main(String[] args) {
         FrameJuego nuevoJuego = new FrameJuego();
@@ -21,7 +22,7 @@ public class Juego {
 class FrameJuego extends JFrame{
     public FrameJuego(){
         super("Monster TecG");
-        setBounds(200,50,800,800);
+        setBounds(200,50,600,600);
         setResizable(false);
         PanelJuego nuevoJuego = new PanelJuego();
         add(nuevoJuego);
@@ -29,7 +30,7 @@ class FrameJuego extends JFrame{
     }
 }
 
-class PanelJuego extends JPanel implements Runnable{
+class PanelJuego extends JPanel /*implements Runnable*/{
 
     private JButton button0;
     private JButton button1;
@@ -46,13 +47,15 @@ class PanelJuego extends JPanel implements Runnable{
     }
     private int puertoInt = newSS.getLocalPort();
     private String puertoString = String.valueOf(puertoInt);
-    private boolean enJuego = false;
+    volatile private boolean enJuego = false;
     private String ipAjeno;
     private int puertoAjeno;
+    private SwingWorker server;
 
 
     public PanelJuego(){
-        setLayout(new FlowLayout(FlowLayout.CENTER,10,200));
+        runServer();
+        setLayout(new FlowLayout(FlowLayout.CENTER,50,100));
         menu = new JPanel();
         JLabel seleccion = new JLabel("Desea ser:");
         menu.add(seleccion);
@@ -66,7 +69,7 @@ class PanelJuego extends JPanel implements Runnable{
         add(menu);
     }
 
-    public class Anfitrion implements ActionListener{
+    public class Anfitrion implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
@@ -80,10 +83,30 @@ class PanelJuego extends JPanel implements Runnable{
                 datos.add(ipAddress);
                 datos.add(puertoEnUso);
                 add(datos);
+                updateUI();
             } catch (UnknownHostException unknownHostException) {
                 unknownHostException.printStackTrace();
             }
-            updateUI();
+
+            SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    while (true) {
+                        boolean refrescar = getEnJuego();
+                        //System.out.println(refrescar);
+                        if (refrescar) {
+                            break;
+                        }
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void done() {
+                    empezarJuego();
+                }
+            };
+            worker.execute();
         }
     }
 
@@ -111,6 +134,12 @@ class PanelJuego extends JPanel implements Runnable{
                 enviarDireccion.add(campoPuerto);
                 envioDireccion = new JButton("Enviar a anfitrión");
                 envioDireccion.addActionListener(new Enviar(jsonString));
+                envioDireccion.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        empezarJuego();
+                    }
+                });
                 enviarDireccion.add(envioDireccion);
                 add(enviarDireccion);
                 updateUI();
@@ -127,6 +156,7 @@ class PanelJuego extends JPanel implements Runnable{
             return campoPuerto.getText();
         }
     }
+
 
     private class Enviar implements ActionListener{
 
@@ -154,26 +184,62 @@ class PanelJuego extends JPanel implements Runnable{
         }
     }
 
-
-    @Override
-    public synchronized void run() {
-        try {
-            while(true){
-                Socket inputSocket = newSS.accept();
-                DataInputStream input = new DataInputStream(inputSocket.getInputStream());
-                String stringRecibido = input.readUTF();
-                JsonNode jsonRecibido = Json.parse(stringRecibido);
-                if(jsonRecibido.has("ipAddress")){
-                    ipAjeno = jsonRecibido.get("ipAddress").asText();
-                    puertoAjeno = jsonRecibido.get("port").asInt();
-                    enJuego = true;
-                    System.out.println("hecho");
-                    removeAll();
-                    updateUI();
-                }
+    public void runServer(){
+        server = new SwingWorker<Void, Void>(){
+            @Override
+            protected synchronized Void doInBackground() throws Exception {
+                try {
+                    while(true){
+                        Socket inputSocket = newSS.accept();
+                        DataInputStream input = new DataInputStream(inputSocket.getInputStream());
+                        String stringRecibido = input.readUTF();
+                        JsonNode jsonRecibido = Json.parse(stringRecibido);
+                        System.out.println(stringRecibido);
+                        System.out.println(jsonRecibido.has("ipAddress"));
+                        if(jsonRecibido.has("ipAddress")){
+                            ipAjeno = jsonRecibido.get("ipAddress").asText();
+                            puertoAjeno = jsonRecibido.get("port").asInt();
+                            enJuego = true;
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } return null;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        };
+        server.execute();
+    }
+
+    public boolean getEnJuego(){return this.enJuego;}
+
+    JFrame fdialogo;
+    JDialog dialogo;
+    JLabel nombre;
+    JTextField campoNombre;
+    JButton enter;
+    String stringNombre;
+
+    public void empezarJuego(){
+        removeAll();
+        fdialogo = new JFrame();
+        dialogo = new JDialog(fdialogo, "Ingresar Nombre", true);
+        dialogo.setLayout(new FlowLayout());
+        nombre = new JLabel("Nombre:");
+        campoNombre = new JTextField(10);
+        enter = new JButton("Ingresar");
+        enter.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stringNombre = campoNombre.getText();
+                dialogo.setVisible(false);
+            }
+        });
+        dialogo.add(nombre);
+        dialogo.add(campoNombre);
+        dialogo.add(enter);
+        dialogo.setSize(200,200);
+        dialogo.setVisible(true);
+        setLayout(new BorderLayout(10,100));
+        updateUI();
     }
 }
