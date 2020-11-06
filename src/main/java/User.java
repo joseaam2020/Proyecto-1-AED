@@ -9,6 +9,10 @@ public class User{
         this.nombre = Nombre;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
     public int getMana() {
         return mana;
     }

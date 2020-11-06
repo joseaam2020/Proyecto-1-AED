@@ -120,6 +120,7 @@ class PanelJuego extends JPanel /*implements Runnable*/{
             InetAddress localIP = null;
             try {
                 enviarDireccion = new JPanel();
+                enviarDireccion.setLayout(new GridLayout(3,2,10,30));
                 localIP = InetAddress.getLocalHost();
                 java.lang.String ipString = localIP.getHostAddress().toString();
                 String jsonString = "{ \"ipAddress\":\"" + ipString + "\",\"port\":" + puertoInt + "}";
@@ -237,9 +238,12 @@ class PanelJuego extends JPanel /*implements Runnable*/{
         dialogo.add(nombre);
         dialogo.add(campoNombre);
         dialogo.add(enter);
-        dialogo.setSize(200,200);
+        dialogo.setBounds(this.getX()+350,this.getY()+100,200,200);
+        dialogo.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         dialogo.setVisible(true);
         setLayout(new BorderLayout(10,100));
+        User newUser = new User(stringNombre);
+
         updateUI();
     }
 }
