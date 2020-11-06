@@ -1,6 +1,7 @@
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,6 +14,9 @@ import java.net.UnknownHostException;
 
 
 public class Juego {
+    /**
+     * Crea la ventana de MonsterTECG
+     */
     public static void main(String[] args) {
         FrameJuego nuevoJuego = new FrameJuego();
         nuevoJuego.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -20,6 +24,9 @@ public class Juego {
 }
 
 class FrameJuego extends JFrame{
+    /**
+     * Ajusta el marco de la ventana de juego y crea el panel de juego
+     */
     public FrameJuego(){
         super("Monster TecG");
         setBounds(200,50,600,600);
@@ -30,7 +37,7 @@ class FrameJuego extends JFrame{
     }
 }
 
-class PanelJuego extends JPanel /*implements Runnable*/{
+class PanelJuego extends JPanel{
 
     private JButton button0;
     private JButton button1;
@@ -70,6 +77,11 @@ class PanelJuego extends JPanel /*implements Runnable*/{
     }
 
     public class Anfitrion implements ActionListener {
+        /**
+         * Accion que ocurre al seleccionar ser Anfitrion
+         *
+         * @param e
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
@@ -92,8 +104,9 @@ class PanelJuego extends JPanel /*implements Runnable*/{
                 @Override
                 protected Void doInBackground() throws Exception {
                     while (true) {
+                        /*loop hace que se muestre el Ip y puerto del anfitrion
+                        * hasta que se reciba un mensaje del invitado*/
                         boolean refrescar = getEnJuego();
-                        //System.out.println(refrescar);
                         if (refrescar) {
                             break;
                         }
@@ -115,6 +128,11 @@ class PanelJuego extends JPanel /*implements Runnable*/{
         private JTextField campoPuerto;
         private JButton envioDireccion;
 
+        /**
+         * Accion que ocurre al seleccionar ser invitado
+         *
+         * @param e
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             InetAddress localIP = null;
@@ -163,10 +181,20 @@ class PanelJuego extends JPanel /*implements Runnable*/{
 
         private String paquete ;
 
+        /**
+         * Agega funcionalidad a los botones para enviar paquetes a informacion.
+         *
+         * @param nuevoPaquete Json en forma de String
+         */
         public Enviar(String nuevoPaquete){
             paquete = nuevoPaquete;
         }
 
+        /**
+         * Funcion de botones para enviar informaion al otro jugador
+         *
+         * @param e
+         */
         public void actionPerformed(ActionEvent e) {
             try {
                 int port = Integer.parseInt(direccion.getPuerto());
@@ -185,6 +213,9 @@ class PanelJuego extends JPanel /*implements Runnable*/{
         }
     }
 
+    /**
+     * Crea un ServerSocket en el cual se aceptan mensajes enviados utilizando SwingWorker.
+     */
     public void runServer(){
         server = new SwingWorker<Void, Void>(){
             @Override
@@ -220,6 +251,9 @@ class PanelJuego extends JPanel /*implements Runnable*/{
     JButton enter;
     String stringNombre;
 
+    /**
+     * Borra componentes en el Panel y agrega la interfaz de juego.
+     */
     public void empezarJuego(){
         removeAll();
         fdialogo = new JFrame();
@@ -238,12 +272,18 @@ class PanelJuego extends JPanel /*implements Runnable*/{
         dialogo.add(nombre);
         dialogo.add(campoNombre);
         dialogo.add(enter);
-        dialogo.setBounds(this.getX()+350,this.getY()+100,200,200);
+        dialogo.setSize(200,200);
         dialogo.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        dialogo.setLocationRelativeTo(this);
         dialogo.setVisible(true);
         setLayout(new BorderLayout(10,100));
         User newUser = new User(stringNombre);
-
+        FormJuego setJuego = new FormJuego();
+        JPanel juego = setJuego.getContenedor();
+        add(juego);
+        for(Component component : juego.getComponents()){
+            System.out.println(component.getClass());
+        }
         updateUI();
     }
 }
