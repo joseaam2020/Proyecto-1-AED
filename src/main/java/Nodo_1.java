@@ -1,2 +1,3 @@
-package PACKAGE_NAME;public class Nodo_1 {
+
+public class Nodo_1 {
 }
