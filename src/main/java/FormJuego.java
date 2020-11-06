@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.net.URL;
 
 public class FormJuego extends JFrame {
     private JPanel Contenedor;

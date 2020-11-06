@@ -7,10 +7,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
+import java.util.Arrays;
 
 
 public class Juego {
@@ -286,4 +284,5 @@ class PanelJuego extends JPanel{
         }
         updateUI();
     }
+
 }
