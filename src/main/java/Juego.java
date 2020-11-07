@@ -58,7 +58,8 @@ class PanelJuego extends JPanel{
     private String ipAjeno;
     private int puertoAjeno;
     private SwingWorker server;
-
+    private User newUser;
+    private User stranger;
 
     public PanelJuego(){
         runServer();
@@ -141,7 +142,9 @@ class PanelJuego extends JPanel{
                 enviarDireccion.setLayout(new GridLayout(3,2,10,30));
                 localIP = InetAddress.getLocalHost();
                 java.lang.String ipString = localIP.getHostAddress().toString();
-                String jsonString = "{ \"ipAddress\":\"" + ipString + "\",\"port\":" + puertoInt + "}";
+                String jsonString = "{ \"ipAddress\":\"" + ipString
+                                    + "\",\"port\":" + puertoInt
+                                    + "}";
                 remove(menu);
                 JLabel ipAddress = new JLabel("Dirección IP:");
                 enviarDireccion.add(ipAddress);
@@ -255,14 +258,14 @@ class PanelJuego extends JPanel{
      * Borra componentes en el Panel y agrega la interfaz de juego.
      */
     public void empezarJuego(){
-        lista_enlazada_simple todasCartas = cargarImagenes();
+        lista_enlazada_simple todasCartas = Carta.cargarImagenes();
         Baraja deck = new Baraja();
         removeAll();
         fdialogo = new JFrame();
         dialogo = new JDialog(fdialogo, "Ingresar Nombre", true);
         dialogo.setLayout(new FlowLayout());
         nombre = new JLabel("Nombre:");
-        campoNombre = new JTextField(10);
+        campoNombre = new JTextField(13);
         enter = new JButton("Ingresar");
         enter.addActionListener(new ActionListener() {
             @Override
@@ -279,61 +282,14 @@ class PanelJuego extends JPanel{
         dialogo.setLocationRelativeTo(this);
         dialogo.setVisible(true);
         setLayout(new BorderLayout(10,100));
-        User newUser = new User(stringNombre);
+        newUser = new User(stringNombre);
         FormJuego setJuego = new FormJuego();
         Nodo_1 peek = (Nodo_1) todasCartas.getPosicion(deck.getCarta_nueva());
         Carta actual = (Carta) peek.getDato();
         setJuego.setButton3Icon(actual.getImage());
+        setJuego.setAnfitrion(newUser.getNombre());
         add(setJuego);
         updateUI();
     }
-     public lista_enlazada_simple cargarImagenes(){
-         Path path = Paths.get("Proyecto-1-AED/src/main/java/images");
-         File images = new File(String.valueOf(path.toAbsolutePath()));
-         lista_enlazada_simple todasCartas = new lista_enlazada_simple();
-         int i = 1;
-         for(File image : images.listFiles()){
-             String nombre = image.getName();
-             String[] propiedades = nombre.split("\\.");
-             int damage;
-             int nivel = 0;
-             switch (propiedades[0])
-             {
-                 case "stickman":
-                     damage = 60;
-                     break;
-                 case "pinguino":
-                     damage = 80;
-                     break;
-                 case "mago":
-                     damage = 100;
-                     break;
-                 case "dragon":
-                     damage = 150;
-                     break;
-                 case "conejo":
-                     damage = 70;
-                     break;
-                 case "bruja":
-                     damage = 100;
-                     break;
-                 case "bandido":
-                     damage = 50;
-                     break;
-                 default:
-                     damage = 0;
-             }
-             if (!Objects.equals(propiedades[1], "png")) {
-                 nivel = Integer.parseInt(propiedades[1]);
-             }
-             ImageIcon original = new ImageIcon(image.getAbsolutePath());
-             Image originalImage = original.getImage();
-             Image moded = originalImage.getScaledInstance(50,60,Image.SCALE_SMOOTH);
-             Icon imageBuffer = new ImageIcon(moded);
-             Carta nuevaCarta = Carta.armar_carta(i, damage, propiedades[0],nivel,imageBuffer);
-             todasCartas.agregar_nodo(nuevaCarta);
-             i++;
-         } return todasCartas;
-     }
 
 }

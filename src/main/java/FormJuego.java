@@ -28,6 +28,9 @@ public class FormJuego extends JPanel {
     private JLabel IntMana;
     private JLabel IntVidaInvitado;
     private JLabel IntManaInvitado;
+    private JButton atrasButton;
+    private JButton adelanteButton;
+    private JLabel ImageCenter;
 
     public FormJuego() {
         this.setSize(600,600);
@@ -41,9 +44,8 @@ public class FormJuego extends JPanel {
         this.add(Contenedor);
     }
 
-    public JPanel getContenedor(){
-        return this.Contenedor;
-    }
+    public void setInvitado(String text){Invitado.setText(text);}
+    public void setAnfitrion(String text){Anfitrion.setText(text);}
 
     public void setButton3Icon(Icon icon) {button3.setIcon(icon);}
     public void setButton4Icon(Icon icon) {button4.setIcon(icon);}
