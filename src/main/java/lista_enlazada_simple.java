@@ -1,26 +1,47 @@
-public class lista_enlazada_simple {
-}
+
 public class lista_enlazada_simple {
     private Nodo_1 primer_nodo;
     private int lista_size;
+
     public lista_enlazada_simple(){
         this.primer_nodo = null;
         this.lista_size = 0;
     }
-    public void lista_vacia(){
+    public boolean lista_vacia(){
         if(primer_nodo == null){
-            System.out.print("Lista vacia");
+            return true;
         }else{
-            System.out.print("La lista contiene elementos");
+            return false;
         }
     }
-    public void agregar_nodo(Nodo_1 jugada){
-        Nodo_1 jugada_instante = new Nodo_1(jugada, Carta.armar_carta(1,1,"magico",1));
-        jugada.next_nodo = primer_nodo;
-        primer_nodo = jugada;
-        lista_size++;
+    public void agregar_nodo(Object dato){
+        if(lista_vacia()){
+            Nodo_1 newNodo = new Nodo_1(dato);
+            primer_nodo = newNodo;
+            lista_size++;
+        } else{
+            Nodo_1 nodoActual = primer_nodo;
+            while(nodoActual.getNext() != null){
+                nodoActual = nodoActual.getNext();
+            };
+            nodoActual.setNext(new Nodo_1(dato));
+            lista_size++;
+        }
     }
-    public Nodo_1 getPrimer_nodo() {
-        return primer_nodo;
+
+    public void print(){
+        if(lista_vacia()){
+            System.out.println("[]");
+        } else {
+            StringBuilder lista = new StringBuilder();
+            lista.append("[" + primer_nodo.getDato());
+            Nodo_1 nodoActual = primer_nodo.getNext();
+            while(nodoActual != null){
+                lista.append(nodoActual.getDato() + ",");
+                nodoActual = nodoActual.getNext();
+            } lista.append("]");
+            System.out.println(String.valueOf(lista));
+        }
     }
+
 }

@@ -8,7 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.*;
-import java.util.Arrays;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 
 public class Juego {
@@ -253,6 +255,7 @@ class PanelJuego extends JPanel{
      * Borra componentes en el Panel y agrega la interfaz de juego.
      */
     public void empezarJuego(){
+        cargarImagenes();
         removeAll();
         fdialogo = new JFrame();
         dialogo = new JDialog(fdialogo, "Ingresar Nombre", true);
@@ -284,5 +287,50 @@ class PanelJuego extends JPanel{
         }
         updateUI();
     }
+     public void cargarImagenes(){
+         Path path = Paths.get("Proyecto-1-AED/src/main/java/images");
+         File images = new File(String.valueOf(path.toAbsolutePath()));
+         lista_enlazada_simple todasCartas = new lista_enlazada_simple();
+         int i = 1;
+         for(File image : images.listFiles()){
+             String nombre = image.getName();
+             String[] propiedades = nombre.split("\\.");
+             System.out.println(propiedades[0]);
+             int damage;
+             int nivel = 0;
+             switch (propiedades[0])
+             {
+                 case "stickman":
+                     damage = 60;
+                     break;
+                 case "pinguino":
+                     damage = 80;
+                     break;
+                 case "mago":
+                     damage = 100;
+                     break;
+                 case "dragon":
+                     damage = 150;
+                     break;
+                 case "conejo":
+                     damage = 70;
+                     break;
+                 case "bruja":
+                     damage = 100;
+                     break;
+                 case "bandido":
+                     damage = 50;
+                     break;
+                 default:
+                     damage = 0;
+             }
+             if (!Objects.equals(propiedades[1], "png")) {
+                 nivel = Integer.parseInt(propiedades[1]);
+             }
+            Carta nuevaCarta = Carta.armar_carta(i, damage, propiedades[0],nivel);
+             todasCartas.agregar_nodo(nuevaCarta);
+             i++;
+         } todasCartas.print();
+     }
 
 }
