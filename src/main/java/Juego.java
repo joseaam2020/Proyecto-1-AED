@@ -255,7 +255,8 @@ class PanelJuego extends JPanel{
      * Borra componentes en el Panel y agrega la interfaz de juego.
      */
     public void empezarJuego(){
-        cargarImagenes();
+        lista_enlazada_simple todasCartas = cargarImagenes();
+        Baraja deck = new Baraja();
         removeAll();
         fdialogo = new JFrame();
         dialogo = new JDialog(fdialogo, "Ingresar Nombre", true);
@@ -280,14 +281,13 @@ class PanelJuego extends JPanel{
         setLayout(new BorderLayout(10,100));
         User newUser = new User(stringNombre);
         FormJuego setJuego = new FormJuego();
-        JPanel juego = setJuego.getContenedor();
-        add(juego);
-        for(Component component : juego.getComponents()){
-            System.out.println(component.getClass());
-        }
+        Nodo_1 peek = (Nodo_1) todasCartas.getPosicion(deck.getCarta_nueva());
+        Carta actual = (Carta) peek.getDato();
+        setJuego.setButton3Icon(actual.getImage());
+        add(setJuego);
         updateUI();
     }
-     public void cargarImagenes(){
+     public lista_enlazada_simple cargarImagenes(){
          Path path = Paths.get("Proyecto-1-AED/src/main/java/images");
          File images = new File(String.valueOf(path.toAbsolutePath()));
          lista_enlazada_simple todasCartas = new lista_enlazada_simple();
@@ -295,7 +295,6 @@ class PanelJuego extends JPanel{
          for(File image : images.listFiles()){
              String nombre = image.getName();
              String[] propiedades = nombre.split("\\.");
-             System.out.println(propiedades[0]);
              int damage;
              int nivel = 0;
              switch (propiedades[0])
@@ -327,10 +326,14 @@ class PanelJuego extends JPanel{
              if (!Objects.equals(propiedades[1], "png")) {
                  nivel = Integer.parseInt(propiedades[1]);
              }
-            Carta nuevaCarta = Carta.armar_carta(i, damage, propiedades[0],nivel);
+             ImageIcon original = new ImageIcon(image.getAbsolutePath());
+             Image originalImage = original.getImage();
+             Image moded = originalImage.getScaledInstance(50,60,Image.SCALE_SMOOTH);
+             Icon imageBuffer = new ImageIcon(moded);
+             Carta nuevaCarta = Carta.armar_carta(i, damage, propiedades[0],nivel,imageBuffer);
              todasCartas.agregar_nodo(nuevaCarta);
              i++;
-         } todasCartas.print();
+         } return todasCartas;
      }
 
 }

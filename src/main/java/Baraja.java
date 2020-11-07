@@ -4,7 +4,7 @@ public class Baraja {
     Stack baraja = arma_pila();
     private Stack arma_pila() {
         Stack baraja = new Stack();
-        int i = 0, cantidad = 30, rango = 30;
+        int i = 0, cantidad = 16, rango = 30;
         int arreglo[] = new int[cantidad];
 
         for (i = 1; i < cantidad; i++) {
@@ -19,11 +19,12 @@ public class Baraja {
             baraja.push(arreglo[k]);
         }
         System.out.print(baraja.peek());
+        System.out.println(baraja);
         return baraja;
     }
-    public void getCarta_nueva() {
-        int prueba = Integer.parseInt(baraja.pop().toString());
-
+    public int getCarta_nueva() {
+        int num = Integer.parseInt(baraja.pop().toString());
+        return num;
     }
 
 }

@@ -44,4 +44,17 @@ public class lista_enlazada_simple {
         }
     }
 
+    public Object getPosicion(int posicion){
+        if(posicion > this.lista_size-1){
+            return null;
+        }
+
+        int indice = 0;
+        Nodo_1 nodoActual = this.primer_nodo;
+        while(indice != posicion){
+            nodoActual = nodoActual.getNext();
+            indice++;
+        } return nodoActual;
+    }
+
 }

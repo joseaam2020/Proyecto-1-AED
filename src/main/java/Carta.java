@@ -1,15 +1,24 @@
+import javax.swing.*;
+
 public class Carta {
     int codigo;
     int damage;
     String tipo;
     int nivel;
-    public static Carta armar_carta(int codigo, int damage, String tipo, int nivel){
+    Icon image;
+
+    public static Carta armar_carta(int codigo, int damage, String tipo, int nivel, Icon icon ){
         Carta carta = new Carta();
         carta.nivel = nivel;
         carta.codigo = codigo;
         carta.damage = damage;
         carta.tipo = tipo;
+        carta.image = icon;
         return carta;
+    }
+
+    public Icon getImage() {
+        return image;
     }
     public int getNivel() {
         return nivel;
