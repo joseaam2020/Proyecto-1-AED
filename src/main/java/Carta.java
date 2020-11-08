@@ -110,4 +110,9 @@ public class Carta {
         }
         return todasCartas;
     }
+
+    public String makeJsonCode(){
+        String jsonCode = "{ \"carta\" :" + this.codigo + "}";
+        return jsonCode;
+    }
 }

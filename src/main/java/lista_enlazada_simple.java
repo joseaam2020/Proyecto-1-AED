@@ -7,6 +7,11 @@ public class lista_enlazada_simple {
         this.primer_nodo = null;
         this.lista_size = 0;
     }
+
+    public int getLista_size() {
+        return lista_size;
+    }
+
     public boolean lista_vacia(){
         if(primer_nodo == null){
             return true;
@@ -44,11 +49,10 @@ public class lista_enlazada_simple {
         }
     }
 
-    public Object getPosicion(int posicion){
+    public Nodo_1 getPosicion(int posicion){
         if(posicion > this.lista_size-1){
             return null;
         }
-
         int indice = 0;
         Nodo_1 nodoActual = this.primer_nodo;
         while(indice != posicion){
