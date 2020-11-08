@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -63,10 +64,11 @@ public class Carta {
      * @return una lista simple con todas las cartas con archivos de images
      */
     public static lista_enlazada_simple cargarImagenes() {
-        Path path = Paths.get("Proyecto-1-AED/src/main/java/images");
-        File images = new File(String.valueOf(path.toAbsolutePath()));
+        Path path = Paths.get("Proyecto-1-AED/images");
+        File images = new File(String.valueOf(path.toAbsolutePath()));//String.valueOf(path.toAbsolutePath()));
         lista_enlazada_simple todasCartas = new lista_enlazada_simple();
         int i = 1;
+        System.out.println(images.isDirectory());
         for (File image : images.listFiles()) {
             String nombre = image.getName();
             String[] propiedades = nombre.split("\\.");
