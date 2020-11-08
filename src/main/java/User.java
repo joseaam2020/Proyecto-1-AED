@@ -9,14 +9,20 @@ public class User{
         this.nombre = Nombre;
     }
 
+    public String makeJsonString(){
+        String json = ("{\"usuario\":\"" + this.nombre +"\","
+                + "\"vida\":" + this.vida + ","
+                + "\"mana\":" + this.mana +""
+                +"}");
+        return json;
+    }
+
     public String getNombre() {
         return nombre;
     }
-
     public int getMana() {
         return this.mana;
     }
-
     public int getVida() {
         return this.vida;
     }
@@ -24,7 +30,6 @@ public class User{
     public void setMana(int Mana) {
         this.mana = Mana;
     }
-
     public void setVida(int Vida) {
         this.vida = Vida;
     }
