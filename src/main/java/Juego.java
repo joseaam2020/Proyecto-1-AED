@@ -270,7 +270,7 @@ class PanelJuego extends JPanel{
                             puertoAjeno = jsonRecibido.get("port").asInt();
                         }
                         if(jsonRecibido.has("carta")){
-                            if(todasCartas != null){
+                            if(todasCartas != null && jsonRecibido.get("carta").asInt() != 31){
                                 int size = todasCartas.getLista_size();
                                 for(int i = 0; i < size; i++){
                                     Nodo_1 nodoActual = todasCartas.getPosicion(i);
@@ -284,6 +284,8 @@ class PanelJuego extends JPanel{
                                         updateUI();
                                     }
                                 }
+                            } else{
+                                setEnTurno(true);
                             }
                         }
                         if(jsonRecibido.has("usuario")){
@@ -409,10 +411,19 @@ class PanelJuego extends JPanel{
                                     setJuego.removeButton4Listener();
                                 }
                             });
+                            setJuego.setSaltarListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    Enviar enviar = new Enviar(Carta.armar_carta(31,0,"null",0,null).makeJsonCode());
+                                    enviar.actionPerformed(e);
+                                    setEnTurno(false);
+                                }
+                            });
                         } else {
                             System.out.println("Se quita funcionalidad");
                             setJuego.removeButton3Listener();
                             setJuego.removeButton4Listener();
+                            setJuego.removeSaltarListener();
                         }
                         System.out.println(enTurno);
                         System.out.println(enTurnoActual);

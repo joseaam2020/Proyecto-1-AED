@@ -87,6 +87,7 @@ public class FormJuego extends JPanel {
     public void setButton2Listener(ActionListener listener){this.button2.addActionListener(listener);}
     public void setButton3Listener(ActionListener listener){this.button3.addActionListener(listener);}
     public void setButton4Listener(ActionListener listener){this.button4.addActionListener(listener);}
+    public void setSaltarListener(ActionListener listener){this.Saltar.addActionListener(listener);}
 
     public void removeButton3Listener(){
         for(ActionListener listener : this.button3.getActionListeners()){
@@ -96,6 +97,11 @@ public class FormJuego extends JPanel {
     public void removeButton4Listener(){
         for(ActionListener listener : this.button4.getActionListeners()){
             this.button4.removeActionListener(listener);
+        }
+    }
+    public void removeSaltarListener(){
+        for(ActionListener listener : this.Saltar.getActionListeners()){
+            this.Saltar.removeActionListener(listener);
         }
     }
 
