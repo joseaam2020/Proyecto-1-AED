@@ -4,7 +4,7 @@ public class Baraja {
     Stack baraja = arma_pila();
     private Stack arma_pila() {
         Stack baraja = new Stack();
-        int i = 0, cantidad = 16, rango = 30;
+        int i = 0, cantidad = 20, rango = 30;
         int arreglo[] = new int[cantidad];
 
         for (i = 1; i < cantidad; i++) {

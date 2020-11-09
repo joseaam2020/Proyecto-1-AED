@@ -64,7 +64,7 @@ public class Carta {
      * @return una lista simple con todas las cartas con archivos de images
      */
     public static lista_enlazada_simple cargarImagenes() {
-        Path path = Paths.get("proyecto1/Proyecto-1-AED/src/main/java/images");
+        Path path = Paths.get("Proyecto-1-AED/src/main/java/images");
         //C:\Users\AndresP\IdeaProjects\Proyecto-1-AED-main\proyecto1\Proyecto-1-AED\src\main\java\images
         File images = new File(String.valueOf(path.toAbsolutePath()));//String.valueOf(path.toAbsolutePath()));
         System.out.println(String.valueOf(path.toAbsolutePath()));

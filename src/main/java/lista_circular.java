@@ -2,7 +2,7 @@ public class lista_circular {
     Nodo_2 carta_ult;
     Nodo_2 carta_next;
 
-    public void lista_enlazada_simple(){
+    public lista_circular(){
         carta_ult = null;
     }
 
@@ -16,7 +16,9 @@ public class lista_circular {
         Nodo_2 nuevo = new Nodo_2(carta_a_ingresar);
         if(carta_ult!=null){
              nuevo.next = carta_ult.next;
+             nuevo.prev = carta_ult;
              carta_ult.next=nuevo;
+             nuevo.next.prev = nuevo;
         }
         carta_ult=nuevo;
     }
@@ -52,6 +54,7 @@ public class lista_circular {
                 if (aux==carta_ult){
                     carta_ult=actual;
                 }
+                aux.next.prev = actual;
                 actual.next=aux.next;
             }
             aux=null;

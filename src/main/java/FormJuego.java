@@ -32,7 +32,7 @@ public class FormJuego extends JPanel {
     private JButton adelanteButton;
     private JLabel ImageCenter;
     private JButton Saltar;
-    private Nodo_2 nodo_carta;
+    volatile private Nodo_2 nodo_carta;
 
     public FormJuego() {
         this.setSize(600,600);
