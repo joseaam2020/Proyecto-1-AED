@@ -1,4 +1,3 @@
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 
@@ -9,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.*;
 
-
 public class Juego {
     /**
      * Crea la ventana de MonsterTECG
@@ -19,7 +17,6 @@ public class Juego {
         nuevoJuego.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }
-
 class FrameJuego extends JFrame{
     /**
      * Ajusta el marco de la ventana de juego y crea el panel de juego
