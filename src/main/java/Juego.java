@@ -299,7 +299,7 @@ class PanelJuego extends JPanel{
                                     setEnTurno(true);
                                 }
                             }
-                        }
+                        } jsonRecibido = null;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -345,6 +345,7 @@ class PanelJuego extends JPanel{
                 System.out.println(enTurnoActual);
                 while(true) {
                     if (enTurnoActual != enTurno) {
+                        enTurnoActual = enTurno;
                         if (enTurno) {
                             System.out.println("Empieza Turno");
                             setJuego.setButton3Listener(new Enviar(actual.makeJsonCode()));
@@ -356,9 +357,11 @@ class PanelJuego extends JPanel{
                                 }
                             });
                         } else {
-                            setJuego.setButton3Listener(null);
+                            System.out.println("Se quita funcionalidad");
+                            setJuego.removeButton3Listener();
                         }
-                        enTurnoActual = enTurno;
+                        System.out.println(enTurno);
+                        System.out.println(enTurnoActual);
                     }
                 }
             }
