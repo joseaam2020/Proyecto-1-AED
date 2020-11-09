@@ -1,29 +1,34 @@
 public class lista_circular {
     Nodo_2 carta_ult;
     Nodo_2 carta_next;
+
     public void lista_enlazada_simple(){
         carta_ult = null;
     }
+
     //método para saber si la lista está vacía
     public boolean lista_vacia(){
         return carta_ult == null;
     }
+
     //método para ingresar carta
-    public lista_circular insertar(Carta carta_new){
-        Nodo_2 nuevo = new Nodo_2(carta_new);
+    public void insertar(Carta carta_a_ingresar){
+        Nodo_2 nuevo = new Nodo_2(carta_a_ingresar);
         if(carta_ult!=null){
              nuevo.next = carta_ult.next;
              carta_ult.next=nuevo;
         }
         carta_ult=nuevo;
-        return this;
     }
+
     public Nodo_2 getCarta_ult() {
         return carta_ult.next;
     }
+
     public void setCarta_ult(Nodo_2 carta_ult) {
         this.carta_ult = carta_ult;
     }
+
     public Nodo_2 getCarta_next() {
         carta_next = carta_ult.next;
         return carta_next;

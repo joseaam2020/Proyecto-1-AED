@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.databind.JsonNode;
 
 
@@ -327,9 +328,25 @@ class PanelJuego extends JPanel{
                 Baraja deck = new Baraja();
                 removeAll();
                 setJuego = new FormJuego();
-                Nodo_1 peek = todasCartas.getPosicion(deck.getCarta_nueva());
-                Carta actual = (Carta) peek.getDato();
+                int cont = 0;
+
+                lista_circular mano = new lista_circular();
+
+                while (cont<4){
+                    Nodo_1 nuevacarta = todasCartas.getPosicion(deck.getCarta_nueva());
+                    Carta carta = (Carta) nuevacarta.getDato();
+                    mano.insertar(carta);
+                    cont++;
+                    System.out.println(carta);
+                }
+
+                Nodo_2 pop = mano.getCarta_ult();
+                System.out.println(pop);
+                Carta actual = pop.getCarta_en_mano();
+                System.out.println(actual);
+
                 setJuego.setButton3Icon(actual.getImage());
+                System.out.println("bf");
                 setJuego.setAnfitrion(newUser.getNombre());
                 setJuego.setIntVida(newUser.getVida());
                 setJuego.setIntMana(newUser.getMana());
