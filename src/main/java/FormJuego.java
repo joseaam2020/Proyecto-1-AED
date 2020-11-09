@@ -31,6 +31,7 @@ public class FormJuego extends JPanel {
     private JButton atrasButton;
     private JButton adelanteButton;
     private JLabel ImageCenter;
+    private JButton Saltar;
 
     public FormJuego() {
         this.setSize(600,600);
@@ -49,6 +50,14 @@ public class FormJuego extends JPanel {
 
     public void setButton3Icon(Icon icon) {button3.setIcon(icon);}
     public void setButton4Icon(Icon icon) {button4.setIcon(icon);}
+
+    public void setIntVida(int intVida) {
+        IntVida.setText(String.valueOf(intVida));
+    }
+
+    public void setIntMana(int intMana) {
+        IntMana.setText(String.valueOf(intMana));
+    }
 
     public void setButton1Listener(ActionListener listener){this.button1.addActionListener(listener);}
     public void setButton2Listener(ActionListener listener){this.button2.addActionListener(listener);}

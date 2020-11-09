@@ -8,26 +8,23 @@ public class User{
         this.vida = 1000;
         this.nombre = Nombre;
     }
-
     public String getNombre() {
         return nombre;
     }
 
     public int getMana() {
-        return mana;
+        return this.mana;
     }
 
     public int getVida() {
-        return vida;
+        return this.vida;
     }
 
     public void setMana(int Mana) {
-        mana = Mana;
+        this.mana = Mana;
     }
 
     public void setVida(int Vida) {
-        vida = Vida;
+        this.vida = Vida;
     }
-
-
 }

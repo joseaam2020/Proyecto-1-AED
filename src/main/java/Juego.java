@@ -36,7 +36,6 @@ class FrameJuego extends JFrame{
         setVisible(true);
     }
 }
-
 class PanelJuego extends JPanel{
 
     private JButton button0;
@@ -58,8 +57,10 @@ class PanelJuego extends JPanel{
     private String ipAjeno;
     private int puertoAjeno;
     private SwingWorker server;
-    private User newUser;
+    private User newUser = null;
     private User stranger;
+    private lista_enlazada_simple todasCartas = null;
+    volatile private FormJuego setJuego = null;
 
     public PanelJuego(){
         runServer();
@@ -235,6 +236,21 @@ class PanelJuego extends JPanel{
                             ipAjeno = jsonRecibido.get("ipAddress").asText();
                             puertoAjeno = jsonRecibido.get("port").asInt();
                             enJuego = true;
+                        } else if(jsonRecibido.has("carta")){
+                            if(todasCartas != null){
+                                int size = todasCartas.getLista_size();
+                                for(int i = 0; i < size; i++){
+                                    Nodo_1 nodoActual = todasCartas.getPosicion(i);
+                                    Carta cartaActual = (Carta) nodoActual.getDato();
+                                    int codigoCarta = cartaActual.getCodigo();
+                                    int codigoRecibido = jsonRecibido.get("carta").asInt();
+                                    if(codigoCarta == codigoRecibido && newUser != null && setJuego != null){
+                                        newUser.setVida(newUser.getVida() - cartaActual.getDamage());
+                                        setJuego.setIntVida(newUser.getVida());
+                                        updateUI();
+                                    }
+                                }
+                            }
                         }
                     }
                 } catch (IOException e) {
@@ -258,7 +274,7 @@ class PanelJuego extends JPanel{
      * Borra componentes en el Panel y agrega la interfaz de juego.
      */
     public void empezarJuego(){
-        lista_enlazada_simple todasCartas = Carta.cargarImagenes();
+        todasCartas = Carta.cargarImagenes();
         Baraja deck = new Baraja();
         removeAll();
         fdialogo = new JFrame();
@@ -283,13 +299,15 @@ class PanelJuego extends JPanel{
         dialogo.setVisible(true);
         setLayout(new BorderLayout(10,100));
         newUser = new User(stringNombre);
-        FormJuego setJuego = new FormJuego();
-        Nodo_1 peek = (Nodo_1) todasCartas.getPosicion(deck.getCarta_nueva());
+        setJuego = new FormJuego();
+        Nodo_1 peek = todasCartas.getPosicion(deck.getCarta_nueva());
         Carta actual = (Carta) peek.getDato();
         setJuego.setButton3Icon(actual.getImage());
         setJuego.setAnfitrion(newUser.getNombre());
+        setJuego.setIntVida(newUser.getVida());
+        setJuego.setIntMana(newUser.getMana());
+        setJuego.setButton3Listener(new Enviar(actual.makeJsonCode()));
         add(setJuego);
         updateUI();
     }
-
 }
