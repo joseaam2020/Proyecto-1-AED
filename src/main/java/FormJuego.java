@@ -32,6 +32,7 @@ public class FormJuego extends JPanel {
     private JButton adelanteButton;
     private JLabel ImageCenter;
     private JButton Saltar;
+    private Nodo_2 nodo_carta;
 
     public FormJuego() {
         this.setSize(600,600);
@@ -42,6 +43,13 @@ public class FormJuego extends JPanel {
         Icon imageBuffer = new ImageIcon(moded);
         setButton4Icon(imageBuffer);
         this.add(Contenedor);
+    }
+
+    public void setNodo_carta(Nodo_2 nodo_carta) {
+        this.nodo_carta = nodo_carta;
+    }
+    public Nodo_2 getNodo_carta() {
+        return nodo_carta;
     }
 
     public void setInvitado(String text){Invitado.setText(text);}
