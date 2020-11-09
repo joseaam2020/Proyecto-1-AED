@@ -33,6 +33,8 @@ public class FormJuego extends JPanel {
     private JLabel ImageCenter;
     private JButton Saltar;
     volatile private Nodo_2 nodo_carta;
+    volatile private Baraja deck;
+    volatile private lista_circular mano;
 
     public FormJuego() {
         this.setSize(600,600);
@@ -50,6 +52,18 @@ public class FormJuego extends JPanel {
     }
     public Nodo_2 getNodo_carta() {
         return nodo_carta;
+    }
+    public void setDeck(Baraja deck) {
+        this.deck = deck;
+    }
+    public Baraja getDeck() {
+        return deck;
+    }
+    public lista_circular getMano() {
+        return mano;
+    }
+    public void setMano(lista_circular mano) {
+        this.mano = mano;
     }
 
     public void setInvitado(String text){Invitado.setText(text);}
@@ -77,6 +91,11 @@ public class FormJuego extends JPanel {
     public void removeButton3Listener(){
         for(ActionListener listener : this.button3.getActionListeners()){
             this.button3.removeActionListener(listener);
+        }
+    }
+    public void removeButton4Listener(){
+        for(ActionListener listener : this.button4.getActionListeners()){
+            this.button4.removeActionListener(listener);
         }
     }
 

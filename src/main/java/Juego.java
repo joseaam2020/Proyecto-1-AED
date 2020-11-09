@@ -330,20 +330,20 @@ class PanelJuego extends JPanel{
                 setJuego = new FormJuego();
                 int cont = 0;
 
-                lista_circular mano = new lista_circular();
+                final lista_circular mano = new lista_circular();
 
                 while (cont<4){
                     Nodo_1 nuevacarta = todasCartas.getPosicion(deck.getCarta_nueva());
                     Carta carta = (Carta) nuevacarta.getDato();
                     mano.insertar(carta);
                     cont++;
-                    System.out.println(carta);
                 }
 
-                final Nodo_2 pop = mano.getCarta_ult();
-                System.out.println(pop);
+                Nodo_2 pop = mano.getCarta_ult();
                 Carta actual = pop.getCarta_en_mano();
                 setJuego.setNodo_carta(pop);
+                setJuego.setDeck(deck);
+                setJuego.setMano(mano);
 
                 setJuego.setButton3Icon(actual.getImage());
                 setJuego.setAnfitrion(newUser.getNombre());
@@ -384,8 +384,6 @@ class PanelJuego extends JPanel{
                         enTurnoActual = enTurno;
                         if (enTurno) {
                             System.out.println("Empieza Turno");
-                            Carta carta = setJuego.getNodo_carta().getCarta_en_mano();
-                            //setJuego.setButton3Listener(new Enviar(carta.makeJsonCode()));
                             setJuego.setButton3Listener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
@@ -401,9 +399,20 @@ class PanelJuego extends JPanel{
                                     setEnTurno(false);
                                 }
                             });
+                            setJuego.setButton4Listener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    int intCarta = setJuego.getDeck().getCarta_nueva();
+                                    Nodo_1 nodoCarta = todasCartas.getPosicion(intCarta);
+                                    Carta carta = (Carta) nodoCarta.getDato();
+                                    setJuego.getMano().insertar(carta);
+                                    setJuego.removeButton4Listener();
+                                }
+                            });
                         } else {
                             System.out.println("Se quita funcionalidad");
                             setJuego.removeButton3Listener();
+                            setJuego.removeButton4Listener();
                         }
                         System.out.println(enTurno);
                         System.out.println(enTurnoActual);
