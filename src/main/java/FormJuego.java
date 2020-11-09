@@ -66,5 +66,11 @@ public class FormJuego extends JPanel {
     public void setButton3Listener(ActionListener listener){this.button3.addActionListener(listener);}
     public void setButton4Listener(ActionListener listener){this.button4.addActionListener(listener);}
 
+    public void removeButton3Listener(){
+        for(ActionListener listener : this.button3.getActionListeners()){
+            this.button3.removeActionListener(listener);
+        }
+    }
+
 
 }
