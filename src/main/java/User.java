@@ -33,6 +33,4 @@ public class User{
     public void setVida(int Vida) {
         this.vida = Vida;
     }
-
-
 }

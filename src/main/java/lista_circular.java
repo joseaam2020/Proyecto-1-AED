@@ -1,3 +1,56 @@
 public class lista_circular {
-
+    Nodo_2 carta_ult;
+    Nodo_2 carta_next;
+    public void lista_enlazada_simple(){
+        carta_ult = null;
+    }
+    //método para saber si la lista está vacía
+    public boolean lista_vacia(){
+        return carta_ult == null;
+    }
+    //método para ingresar carta
+    public lista_circular insertar(Carta carta_new){
+        Nodo_2 nuevo = new Nodo_2(carta_new);
+        if(carta_ult!=null){
+             nuevo.next = carta_ult.next;
+             carta_ult.next=nuevo;
+        }
+        carta_ult=nuevo;
+        return this;
+    }
+    public Nodo_2 getCarta_ult() {
+        return carta_ult.next;
+    }
+    public void setCarta_ult(Nodo_2 carta_ult) {
+        this.carta_ult = carta_ult;
+    }
+    public Nodo_2 getCarta_next() {
+        carta_next = carta_ult.next;
+        return carta_next;
+    }
+    public boolean eliminar(Carta carta_a_eliminar){
+        Nodo_2 actual;
+        boolean encontrado = false;
+        actual = carta_ult;
+        while (actual.next!=carta_ult && !encontrado){
+            encontrado = (actual.next.carta_en_mano==carta_a_eliminar);
+            if (!encontrado){
+                actual=actual.next;
+            }
+        }
+        encontrado=(actual.next.carta_en_mano==carta_a_eliminar);
+        if (encontrado){
+            Nodo_2 aux = actual.next;
+            if (carta_ult==carta_ult.next){
+                carta_ult=null;
+            }else{
+                if (aux==carta_ult){
+                    carta_ult=actual;
+                }
+                actual.next=aux.next;
+            }
+            aux=null;
+        }
+        return encontrado==true;
+    }
 }

@@ -33,7 +33,6 @@ class FrameJuego extends JFrame{
         setVisible(true);
     }
 }
-
 class PanelJuego extends JPanel{
 
     private JButton button0;
@@ -392,5 +391,4 @@ class PanelJuego extends JPanel{
         setLayout(new BorderLayout(10,100));
         return stringNombre;
     }
-
 }
