@@ -59,7 +59,8 @@ class PanelJuego extends JPanel{
     private User stranger;
     private lista_enlazada_simple todasCartas = null;
     volatile private FormJuego setJuego = null;
-    volatile private boolean enTurno;
+    volatile private boolean enTurno = false;
+    private boolean esAnfitrion = false;
 
     public PanelJuego(){
         runServer();
@@ -87,6 +88,7 @@ class PanelJuego extends JPanel{
         public void actionPerformed(ActionEvent e) {
             try {
                 System.out.println(puertoString);
+                esAnfitrion = true;
                 remove(menu);
                 JPanel datos = new JPanel();
                 InetAddress localIP = InetAddress.getLocalHost();
@@ -281,6 +283,7 @@ class PanelJuego extends JPanel{
                                     if(codigoCarta == codigoRecibido && newUser != null && setJuego != null){
                                         newUser.setVida(newUser.getVida() - cartaActual.getDamage());
                                         setJuego.setIntVida(newUser.getVida());
+                                        setEnTurno(true);
                                         updateUI();
                                     }
                                 }
@@ -292,6 +295,10 @@ class PanelJuego extends JPanel{
                             stranger.setMana(jsonRecibido.get("mana").asInt());
                             if(!enJuego){
                                 enJuego = true;
+                                if(!esAnfitrion){
+                                    System.out.println("Se hizo setEnTurno");
+                                    setEnTurno(true);
+                                }
                             }
                         }
                     }
@@ -304,6 +311,7 @@ class PanelJuego extends JPanel{
     }
 
     public boolean getEnJuego(){return this.enJuego;}
+    public void setEnTurno(boolean valor){this.enTurno = valor;}
 
     JFrame fdialogo;
     JDialog dialogo;
@@ -316,23 +324,49 @@ class PanelJuego extends JPanel{
      * Borra componentes en el Panel y agrega la interfaz de juego.
      */
     public void empezarJuego(){
-        todasCartas = Carta.cargarImagenes();
-        Baraja deck = new Baraja();
-        removeAll();
-        setJuego = new FormJuego();
-        Nodo_1 peek = todasCartas.getPosicion(deck.getCarta_nueva());
-        Carta actual = (Carta) peek.getDato();
-        setJuego.setButton3Icon(actual.getImage());
-        setJuego.setAnfitrion(newUser.getNombre());
-        setJuego.setIntVida(newUser.getVida());
-        setJuego.setIntMana(newUser.getMana());
-        setJuego.setInvitado(stranger.getNombre());
-        setJuego.setIntVidaInvitado(stranger.getVida());
-        setJuego.setIntManaInvitado(stranger.getMana());
-        setJuego.setButton3Listener(new Enviar(actual.makeJsonCode()));
-        add(setJuego);
-        updateUI();
+        SwingWorker<Void, Void> turno = new SwingWorker<Void, Void>(){
+            @Override
+            protected Void doInBackground() throws Exception {
+                todasCartas = Carta.cargarImagenes();
+                Baraja deck = new Baraja();
+                removeAll();
+                setJuego = new FormJuego();
+                Nodo_1 peek = todasCartas.getPosicion(deck.getCarta_nueva());
+                Carta actual = (Carta) peek.getDato();
+                setJuego.setButton3Icon(actual.getImage());
+                setJuego.setAnfitrion(newUser.getNombre());
+                setJuego.setIntVida(newUser.getVida());
+                setJuego.setIntMana(newUser.getMana());
+                setJuego.setInvitado(stranger.getNombre());
+                setJuego.setIntVidaInvitado(stranger.getVida());
+                setJuego.setIntManaInvitado(stranger.getMana());
+                add(setJuego);
+                updateUI();
+                boolean enTurnoActual = false;
+                System.out.println(enTurnoActual);
+                while(true) {
+                    if (enTurnoActual != enTurno) {
+                        if (enTurno) {
+                            System.out.println("Empieza Turno");
+                            setJuego.setButton3Listener(new Enviar(actual.makeJsonCode()));
+                            setJuego.setButton3Listener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    System.out.println("Acabo Turno");
+                                    setEnTurno(false);
+                                }
+                            });
+                        } else {
+                            setJuego.setButton3Listener(null);
+                        }
+                        enTurnoActual = enTurno;
+                    }
+                }
+            }
+        }; turno.execute();
+
     }
+
 
     public String preguntarNombre(){
         fdialogo = new JFrame();
