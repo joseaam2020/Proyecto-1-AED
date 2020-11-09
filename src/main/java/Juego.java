@@ -55,6 +55,8 @@ class PanelJuego extends JPanel{
     private User stranger;
     private lista_enlazada_simple todasCartas = null;
     volatile private FormJuego setJuego = null;
+    volatile private boolean enTurno = false;
+    private boolean esAnfitrion = false;
 
     public PanelJuego(){
         runServer();
@@ -82,6 +84,7 @@ class PanelJuego extends JPanel{
         public void actionPerformed(ActionEvent e) {
             try {
                 System.out.println(puertoString);
+                esAnfitrion = true;
                 remove(menu);
                 JPanel datos = new JPanel();
                 InetAddress localIP = InetAddress.getLocalHost();
@@ -112,6 +115,10 @@ class PanelJuego extends JPanel{
 
                 @Override
                 protected void done() {
+                    String stringNombre = preguntarNombre();
+                    newUser = new User(stringNombre);
+                    Enviar enviar = new Enviar(newUser.makeJsonString());
+                    enviar.actionPerformed(new ActionEvent(new Object(), 0, "do"));
                     empezarJuego();
                 }
             };
@@ -150,16 +157,45 @@ class PanelJuego extends JPanel{
                 campoPuerto = new JTextField(20);
                 enviarDireccion.add(campoPuerto);
                 envioDireccion = new JButton("Enviar a anfitrión");
+                envioDireccion.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String stringNombre = preguntarNombre();
+                        newUser = new User(stringNombre);
+                        Enviar enviar = new Enviar(newUser.makeJsonString());
+                        enviar.actionPerformed(e);
+                    }
+                });
                 envioDireccion.addActionListener(new Enviar(jsonString));
+                /*
                 envioDireccion.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         empezarJuego();
                     }
-                });
+                });*/
                 enviarDireccion.add(envioDireccion);
                 add(enviarDireccion);
                 updateUI();
+                SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        while (true) {
+                            /*loop hace que se muestre el Ip y puerto del anfitrion
+                             * hasta que se reciba un mensaje del invitado*/
+                            boolean refrescar = getEnJuego();
+                            if (refrescar) {
+                                break;
+                            }
+                        }
+                        return null;
+                    }
+                    @Override
+                    protected void done() {
+                        empezarJuego();
+                    }
+                };
+                worker.execute();
             } catch (UnknownHostException unknownHostException) {
                 unknownHostException.printStackTrace();
             }
@@ -228,12 +264,11 @@ class PanelJuego extends JPanel{
                         String stringRecibido = input.readUTF();
                         JsonNode jsonRecibido = Json.parse(stringRecibido);
                         System.out.println(stringRecibido);
-                        System.out.println(jsonRecibido.has("ipAddress"));
                         if(jsonRecibido.has("ipAddress")){
                             ipAjeno = jsonRecibido.get("ipAddress").asText();
                             puertoAjeno = jsonRecibido.get("port").asInt();
-                            enJuego = true;
-                        } else if(jsonRecibido.has("carta")){
+                        }
+                        if(jsonRecibido.has("carta")){
                             if(todasCartas != null){
                                 int size = todasCartas.getLista_size();
                                 for(int i = 0; i < size; i++){
@@ -244,8 +279,21 @@ class PanelJuego extends JPanel{
                                     if(codigoCarta == codigoRecibido && newUser != null && setJuego != null){
                                         newUser.setVida(newUser.getVida() - cartaActual.getDamage());
                                         setJuego.setIntVida(newUser.getVida());
+                                        setEnTurno(true);
                                         updateUI();
                                     }
+                                }
+                            }
+                        }
+                        if(jsonRecibido.has("usuario")){
+                            stranger = new User(jsonRecibido.get("usuario").asText());
+                            stranger.setVida(jsonRecibido.get("vida").asInt());
+                            stranger.setMana(jsonRecibido.get("mana").asInt());
+                            if(!enJuego){
+                                enJuego = true;
+                                if(!esAnfitrion){
+                                    System.out.println("Se hizo setEnTurno");
+                                    setEnTurno(true);
                                 }
                             }
                         }
@@ -259,6 +307,7 @@ class PanelJuego extends JPanel{
     }
 
     public boolean getEnJuego(){return this.enJuego;}
+    public void setEnTurno(boolean valor){this.enTurno = valor;}
 
     JFrame fdialogo;
     JDialog dialogo;
@@ -271,9 +320,51 @@ class PanelJuego extends JPanel{
      * Borra componentes en el Panel y agrega la interfaz de juego.
      */
     public void empezarJuego(){
-        todasCartas = Carta.cargarImagenes();
-        Baraja deck = new Baraja();
-        removeAll();
+        SwingWorker<Void, Void> turno = new SwingWorker<Void, Void>(){
+            @Override
+            protected Void doInBackground() throws Exception {
+                todasCartas = Carta.cargarImagenes();
+                Baraja deck = new Baraja();
+                removeAll();
+                setJuego = new FormJuego();
+                Nodo_1 peek = todasCartas.getPosicion(deck.getCarta_nueva());
+                Carta actual = (Carta) peek.getDato();
+                setJuego.setButton3Icon(actual.getImage());
+                setJuego.setAnfitrion(newUser.getNombre());
+                setJuego.setIntVida(newUser.getVida());
+                setJuego.setIntMana(newUser.getMana());
+                setJuego.setInvitado(stranger.getNombre());
+                setJuego.setIntVidaInvitado(stranger.getVida());
+                setJuego.setIntManaInvitado(stranger.getMana());
+                add(setJuego);
+                updateUI();
+                boolean enTurnoActual = false;
+                System.out.println(enTurnoActual);
+                while(true) {
+                    if (enTurnoActual != enTurno) {
+                        if (enTurno) {
+                            System.out.println("Empieza Turno");
+                            setJuego.setButton3Listener(new Enviar(actual.makeJsonCode()));
+                            setJuego.setButton3Listener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    System.out.println("Acabo Turno");
+                                    setEnTurno(false);
+                                }
+                            });
+                        } else {
+                            setJuego.setButton3Listener(null);
+                        }
+                        enTurnoActual = enTurno;
+                    }
+                }
+            }
+        }; turno.execute();
+
+    }
+
+
+    public String preguntarNombre(){
         fdialogo = new JFrame();
         dialogo = new JDialog(fdialogo, "Ingresar Nombre", true);
         dialogo.setLayout(new FlowLayout());
@@ -295,16 +386,6 @@ class PanelJuego extends JPanel{
         dialogo.setLocationRelativeTo(this);
         dialogo.setVisible(true);
         setLayout(new BorderLayout(10,100));
-        newUser = new User(stringNombre);
-        setJuego = new FormJuego();
-        Nodo_1 peek = todasCartas.getPosicion(deck.getCarta_nueva());
-        Carta actual = (Carta) peek.getDato();
-        setJuego.setButton3Icon(actual.getImage());
-        setJuego.setAnfitrion(newUser.getNombre());
-        setJuego.setIntVida(newUser.getVida());
-        setJuego.setIntMana(newUser.getMana());
-        setJuego.setButton3Listener(new Enviar(actual.makeJsonCode()));
-        add(setJuego);
-        updateUI();
+        return stringNombre;
     }
 }

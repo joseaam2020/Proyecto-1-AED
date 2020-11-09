@@ -30,15 +30,15 @@ public class Carta {
         return nivel;
     }
     public int getDamage(){
-        System.out.print("damage: "+damage);
+        //System.out.print("damage: "+damage);
         return damage;
     }
     public int getCodigo(){
-        System.out.print("código: "+codigo);
+        //System.out.print("código: "+codigo);
         return codigo;
     }
     public String getTipo(){
-        System.out.print("código: "+tipo);
+        //System.out.print("código: "+tipo);
         return tipo;
     }
 
@@ -64,19 +64,23 @@ public class Carta {
      * @return una lista simple con todas las cartas con archivos de images
      */
     public static lista_enlazada_simple cargarImagenes() {
-        Path path = Paths.get("proyecto1/Proyecto-1-AED/src/main/java/images");
-        //C:\Users\AndresP\IdeaProjects\Proyecto-1-AED-main\proyecto1\Proyecto-1-AED\src\main\java\images
-        File images = new File(String.valueOf(path.toAbsolutePath()));
+        Path path = Paths.get("Proyecto-1-AED/src/main/java/images");
+        File images = new File(String.valueOf(path.toAbsolutePath()));//String.valueOf(path.toAbsolutePath()));
         System.out.println(String.valueOf(path.toAbsolutePath()));
         lista_enlazada_simple todasCartas = new lista_enlazada_simple();
         int i = 1;
-        System.out.println(images.isDirectory());
         for (File image : images.listFiles()) {
             String nombre = image.getName();
             String[] propiedades = nombre.split("\\.");
             int damage;
             int nivel = 0;
             switch (propiedades[0]) {
+                case "hechizo sanación":
+                    damage = 0;
+                    break;
+                case "huevo":
+                    damage = 0;
+                    break;
                 case "stickman":
                     damage = 60;
                     break;

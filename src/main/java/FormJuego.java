@@ -37,7 +37,6 @@ public class FormJuego extends JPanel {
         this.setSize(600,600);
         Path path = Paths.get("Proyecto-1-AED/src/main/java/otrasImagenes/atrasCarta.png");
         ImageIcon original = new ImageIcon(String.valueOf(path.toAbsolutePath()));
-        System.out.println(original.toString());
         Image originalImage = original.getImage();
         Image moded = originalImage.getScaledInstance(50,70,Image.SCALE_SMOOTH);
         Icon imageBuffer = new ImageIcon(moded);
@@ -54,9 +53,12 @@ public class FormJuego extends JPanel {
     public void setIntVida(int intVida) {
         IntVida.setText(String.valueOf(intVida));
     }
-
     public void setIntMana(int intMana) {
         IntMana.setText(String.valueOf(intMana));
+    }
+    public void setIntVidaInvitado(int intVidaInvitado) { IntVidaInvitado.setText(String.valueOf(intVidaInvitado)); }
+    public void setIntManaInvitado(int intManaInvitado) {
+        IntManaInvitado.setText(String.valueOf(intManaInvitado));
     }
 
     public void setButton1Listener(ActionListener listener){this.button1.addActionListener(listener);}
