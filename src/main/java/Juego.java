@@ -8,9 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Objects;
 
 
 public class Juego {
@@ -54,8 +51,8 @@ class PanelJuego extends JPanel{
     private int puertoInt = newSS.getLocalPort();
     private String puertoString = String.valueOf(puertoInt);
     volatile private boolean enJuego = false;
-    private String ipAjeno;
-    private int puertoAjeno;
+    private String ipAjeno = null;
+    private int puertoAjeno = -1;
     private SwingWorker server;
     private User newUser = null;
     private User stranger;
@@ -201,8 +198,11 @@ class PanelJuego extends JPanel{
          */
         public void actionPerformed(ActionEvent e) {
             try {
-                int port = Integer.parseInt(direccion.getPuerto());
-                Socket newSocket = new Socket(direccion.getIpAddress(),port);
+                if(ipAjeno == null && puertoAjeno == -1){
+                    puertoAjeno = Integer.parseInt(direccion.getPuerto());
+                    ipAjeno = direccion.getIpAddress();
+                }
+                Socket newSocket = new Socket(ipAjeno,puertoAjeno);
                 DataOutputStream output = new DataOutputStream(newSocket.getOutputStream());
                 output.writeUTF(paquete);
                 output.close();
