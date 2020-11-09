@@ -341,12 +341,9 @@ class PanelJuego extends JPanel{
                 }
 
                 Nodo_2 pop = mano.getCarta_ult();
-                System.out.println(pop);
                 Carta actual = pop.getCarta_en_mano();
-                System.out.println(actual);
 
                 setJuego.setButton3Icon(actual.getImage());
-                System.out.println("bf");
                 setJuego.setAnfitrion(newUser.getNombre());
                 setJuego.setIntVida(newUser.getVida());
                 setJuego.setIntMana(newUser.getMana());
