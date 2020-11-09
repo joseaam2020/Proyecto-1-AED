@@ -340,10 +340,10 @@ class PanelJuego extends JPanel{
                     System.out.println(carta);
                 }
 
-                Nodo_2 pop = mano.getCarta_ult();
+                final Nodo_2 pop = mano.getCarta_ult();
                 System.out.println(pop);
                 Carta actual = pop.getCarta_en_mano();
-                System.out.println(actual);
+                setJuego.setNodo_carta(pop);
 
                 setJuego.setButton3Icon(actual.getImage());
                 System.out.println("bf");
@@ -353,6 +353,22 @@ class PanelJuego extends JPanel{
                 setJuego.setInvitado(stranger.getNombre());
                 setJuego.setIntVidaInvitado(stranger.getVida());
                 setJuego.setIntManaInvitado(stranger.getMana());
+                setJuego.setButton2Listener(new ActionListener() {
+                    private Nodo_2 nodoactual = pop;
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        nodoactual = nodoactual.next;
+                        setJuego.setNodo_carta(nodoactual);
+                        Carta carta = nodoactual.getCarta_en_mano();
+                        setJuego.setButton3Icon(carta.getImage());
+                    }
+                });
+                setJuego.setButton1Listener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                    }
+                });
                 add(setJuego);
                 updateUI();
                 boolean enTurnoActual = false;
@@ -362,7 +378,8 @@ class PanelJuego extends JPanel{
                         enTurnoActual = enTurno;
                         if (enTurno) {
                             System.out.println("Empieza Turno");
-                            setJuego.setButton3Listener(new Enviar(actual.makeJsonCode()));
+                            Carta carta = setJuego.getNodo_carta().getCarta_en_mano();
+                            setJuego.setButton3Listener(new Enviar(carta.makeJsonCode()));
                             setJuego.setButton3Listener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
