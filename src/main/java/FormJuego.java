@@ -32,6 +32,8 @@ public class FormJuego extends JPanel {
     private JButton adelanteButton;
     private JLabel ImageCenter;
     private JButton Saltar;
+    private JLabel valueAtaque;
+    private JLabel valueMana;
     volatile private Nodo_2 nodo_carta;
     volatile private Baraja deck;
     volatile private lista_circular mano;
@@ -65,6 +67,8 @@ public class FormJuego extends JPanel {
     public void setMano(lista_circular mano) {
         this.mano = mano;
     }
+    public void setValueAtaque(int ataque){this.valueAtaque.setText("Ataque:" + ataque);}
+    public void setValueMana(int mana){this.valueMana.setText("Costo:" + mana + "mana");}
 
     public void setInvitado(String text){Invitado.setText(text);}
     public void setAnfitrion(String text){Anfitrion.setText(text);}

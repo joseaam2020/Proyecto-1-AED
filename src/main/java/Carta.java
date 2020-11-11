@@ -12,17 +12,20 @@ public class Carta {
     String tipo;
     int nivel;
     Icon image;
+    int costo;
 
     public static Carta armar_carta(int codigo, int damage, String tipo, int nivel, Icon icon ){
         Carta carta = new Carta();
         carta.nivel = nivel;
         carta.codigo = codigo;
-        carta.damage = damage;
+        carta.damage = damage * nivel;
         carta.tipo = tipo;
         carta.image = icon;
+        carta.costo = carta.damage / 2;
         return carta;
     }
 
+    public int getCosto(){return costo;}
     public Icon getImage() {
         return image;
     }
@@ -57,6 +60,7 @@ public class Carta {
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
+
 
     /**
      * Carga toda las imagenes de images en Cartas, dandoles sus atributos respectivos
