@@ -21,7 +21,11 @@ public class Carta {
         carta.damage = damage * nivel;
         carta.tipo = tipo;
         carta.image = icon;
-        carta.costo = carta.damage / 2;
+        if (carta.damage != 0){
+            carta.costo = carta.damage / 2;
+        } else{
+            carta.costo = 150;
+        }
         return carta;
     }
 
@@ -80,12 +84,6 @@ public class Carta {
             int damage;
             int nivel = 0;
             switch (propiedades[0]) {
-                case "hechizo sanación":
-                    damage = 0;
-                    break;
-                case "huevo":
-                    damage = 0;
-                    break;
                 case "stickman":
                     damage = 60;
                     break;

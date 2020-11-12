@@ -352,9 +352,7 @@ class PanelJuego extends JPanel{
                 setJuego.setDeck(deck);
                 setJuego.setMano(mano);
 
-                setJuego.setButton3Icon(actual.getImage());
-                setJuego.setValueMana(actual.getCosto());
-                setJuego.setValueAtaque(actual.getDamage());
+                setJuego.setinterfazCartas();
                 setJuego.setAnfitrion(newUser.getNombre());
                 setJuego.setIntVida(newUser.getVida());
                 setJuego.setIntMana(newUser.getMana());
@@ -366,9 +364,7 @@ class PanelJuego extends JPanel{
                         nodoactual = nodoactual.next;
                         setJuego.setNodo_carta(nodoactual);
                         Carta carta = nodoactual.getCarta_en_mano();
-                        setJuego.setButton3Icon(carta.getImage());
-                        setJuego.setValueAtaque(carta.getDamage());
-                        setJuego.setValueMana(carta.getCosto());
+                        setJuego.setinterfazCartas();
                         updateUI();
                     }
                 });
@@ -378,10 +374,7 @@ class PanelJuego extends JPanel{
                         Nodo_2 nodoactual = setJuego.getNodo_carta();
                         nodoactual = nodoactual.prev;
                         setJuego.setNodo_carta(nodoactual);
-                        Carta carta = nodoactual.getCarta_en_mano();
-                        setJuego.setButton3Icon(carta.getImage());
-                        setJuego.setValueAtaque(carta.getDamage());
-                        setJuego.setValueMana(carta.getCosto());
+                        setJuego.setinterfazCartas();
                         updateUI();
                     }
                 });
@@ -428,10 +421,7 @@ class PanelJuego extends JPanel{
                                         Nodo_2 nodoactual = setJuego.getNodo_carta();
                                         nodoactual = nodoactual.next;
                                         setJuego.setNodo_carta(nodoactual);
-                                        Carta nuevaCarta = nodoactual.getCarta_en_mano();
-                                        setJuego.setButton3Icon(nuevaCarta.getImage());
-                                        setJuego.setValueAtaque(nuevaCarta.getDamage());
-                                        setJuego.setValueMana(nuevaCarta.getCosto());
+                                        setJuego.setinterfazCartas();
                                         System.out.println("Acabo Turno");
                                         float newMana = (float) (newUser.getMana() * 1.25);
                                         newUser.setMana((int) newMana);

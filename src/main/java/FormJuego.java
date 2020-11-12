@@ -77,6 +77,7 @@ public class FormJuego extends JPanel {
     }
 
     public void setValueAtaque(int ataque){this.valueAtaque.setText("Ataque:" + ataque);}
+    public void setValueAtaqueString(String Ataque){this.valueAtaque.setText("Ataque:"+ Ataque);}
     public void setValueMana(int mana){this.valueMana.setText("Costo:" + mana + "mana");}
 
     public void insertarHistorial(String Jugador, Carta carta){
@@ -92,7 +93,13 @@ public class FormJuego extends JPanel {
         Registro registro = (Registro) nodo.getDato();
         Carta carta = registro.getCarta();
         this.setImageCenterIcon(carta.getImage());
-        this.setImageCenterText(registro.getJugador() + ": daño de " + carta.getDamage());
+        int damage = carta.getDamage();
+        if (damage != 0){
+            this.setImageCenterText(registro.getJugador() + ": daño de " + damage);
+        } else{
+            this.setImageCenterText(registro.getJugador() + ": daño de " + carta.getTipo());
+        }
+
     }
 
     public class Registro{
@@ -139,6 +146,20 @@ public class FormJuego extends JPanel {
     public void setSaltarListener(ActionListener listener){this.Saltar.addActionListener(listener);}
     public void setAtrasButtonListener(ActionListener listener){this.atrasButton.addActionListener(listener);}
     public void setAdelanteButtonListener(ActionListener listener){this.adelanteButton.addActionListener(listener);}
+
+    public void setinterfazCartas(){
+        Nodo_2 nodoactual = this.getNodo_carta();
+        Carta carta = nodoactual.getCarta_en_mano();
+        if (carta.getDamage() != 0){
+            this.setButton3Icon(carta.getImage());
+            this.setValueAtaque(carta.getDamage());
+            this.setValueMana(carta.getCosto());
+        } else{
+            this.setButton3Icon(carta.getImage());
+            this.setValueAtaqueString(carta.getTipo());
+            this.setValueMana(carta.getCosto());
+        }
+    }
 
     public void removeButton3Listener(){
         for(ActionListener listener : this.button3.getActionListeners()){
