@@ -280,6 +280,8 @@ class PanelJuego extends JPanel{
                                     if(codigoCarta == codigoRecibido && newUser != null && setJuego != null){
                                         newUser.setVida(newUser.getVida() - cartaActual.getDamage());
                                         setJuego.setIntVida(newUser.getVida());
+                                        setJuego.insertarHistorial(stranger.getNombre(),cartaActual);
+                                        setJuego.mostarHistorial(setJuego.getHistorial().getTail());
                                         setEnTurno(true);
                                         updateUI();
                                     }
@@ -383,6 +385,24 @@ class PanelJuego extends JPanel{
                         updateUI();
                     }
                 });
+                setJuego.setAdelanteButtonListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Nodo_3 registro = setJuego.getRegistro().getNext();
+                        if (registro != null){
+                            setJuego.mostarHistorial(registro);
+                        }
+                    }
+                });
+                setJuego.setAtrasButtonListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Nodo_3 registro = setJuego.getRegistro().getPrev();
+                        if (registro != null){
+                            setJuego.mostarHistorial(registro);
+                        }
+                    }
+                });
                 add(setJuego);
                 updateUI();
                 boolean enTurnoActual = false;
@@ -402,6 +422,16 @@ class PanelJuego extends JPanel{
                                         Enviar enviar = new Enviar(carta.makeJsonCode());
                                         enviar.actionPerformed(e);
                                         newUser.setMana(userMana - costo);
+                                        setJuego.insertarHistorial(newUser.getNombre(),carta);
+                                        setJuego.mostarHistorial(setJuego.getHistorial().getTail());
+                                        setJuego.eliminarCartaMano(carta);
+                                        Nodo_2 nodoactual = setJuego.getNodo_carta();
+                                        nodoactual = nodoactual.next;
+                                        setJuego.setNodo_carta(nodoactual);
+                                        Carta nuevaCarta = nodoactual.getCarta_en_mano();
+                                        setJuego.setButton3Icon(nuevaCarta.getImage());
+                                        setJuego.setValueAtaque(nuevaCarta.getDamage());
+                                        setJuego.setValueMana(nuevaCarta.getCosto());
                                         System.out.println("Acabo Turno");
                                         float newMana = (float) (newUser.getMana() * 1.25);
                                         newUser.setMana((int) newMana);
@@ -411,13 +441,7 @@ class PanelJuego extends JPanel{
                                         setEnTurno(false);
                                     }
                                 }
-                            });/*
-                            setJuego.setButton3Listener(new ActionListener() {
-                                @Override
-                                public void actionPerformed(ActionEvent e) {
-
-                                }
-                            });*/
+                            });
                             setJuego.setButton4Listener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {

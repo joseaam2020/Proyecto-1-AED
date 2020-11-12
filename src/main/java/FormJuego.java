@@ -37,6 +37,8 @@ public class FormJuego extends JPanel {
     volatile private Nodo_2 nodo_carta;
     volatile private Baraja deck;
     volatile private lista_circular mano;
+    volatile private Lista_enlazada_doble historial;
+    volatile private Nodo_3 registro;
 
     public FormJuego() {
         this.setSize(600,600);
@@ -64,17 +66,60 @@ public class FormJuego extends JPanel {
     public lista_circular getMano() {
         return mano;
     }
+    public Lista_enlazada_doble getHistorial(){return historial;}
     public void setMano(lista_circular mano) {
         this.mano = mano;
     }
+    public Nodo_3 getRegistro(){return registro;}
+
+    public void eliminarCartaMano(Carta carta){
+        this.mano.eliminar(carta);
+    }
+
     public void setValueAtaque(int ataque){this.valueAtaque.setText("Ataque:" + ataque);}
     public void setValueMana(int mana){this.valueMana.setText("Costo:" + mana + "mana");}
 
+    public void insertarHistorial(String Jugador, Carta carta){
+        if (historial == null){
+            historial = new Lista_enlazada_doble();
+        }
+        Registro nuevoRegistro = new Registro(Jugador, carta);
+        this.historial.insertar(nuevoRegistro);
+    }
+
+    public void mostarHistorial(Nodo_3 nodo){
+        this.registro = nodo;
+        Registro registro = (Registro) nodo.getDato();
+        Carta carta = registro.getCarta();
+        this.setImageCenterIcon(carta.getImage());
+        this.setImageCenterText(registro.getJugador() + ": daño de " + carta.getDamage());
+    }
+
+    public class Registro{
+        private String jugador;
+        private Carta carta;
+
+        public Registro(String Jugador, Carta cartaUtilizada){
+            this.carta = cartaUtilizada;
+            this.jugador = Jugador;
+        }
+
+        public String getJugador() {
+            return jugador;
+        }
+
+        public Carta getCarta() {
+            return carta;
+        }
+    }
+
     public void setInvitado(String text){Invitado.setText(text);}
     public void setAnfitrion(String text){Anfitrion.setText(text);}
+    public void setImageCenterText(String text){ImageCenter.setText(text);}
 
     public void setButton3Icon(Icon icon) {button3.setIcon(icon);}
     public void setButton4Icon(Icon icon) {button4.setIcon(icon);}
+    public void setImageCenterIcon(Icon icon) {ImageCenter.setIcon(icon);}
 
     public void setIntVida(int intVida) {
         IntVida.setText(String.valueOf(intVida));
@@ -92,6 +137,8 @@ public class FormJuego extends JPanel {
     public void setButton3Listener(ActionListener listener){this.button3.addActionListener(listener);}
     public void setButton4Listener(ActionListener listener){this.button4.addActionListener(listener);}
     public void setSaltarListener(ActionListener listener){this.Saltar.addActionListener(listener);}
+    public void setAtrasButtonListener(ActionListener listener){this.atrasButton.addActionListener(listener);}
+    public void setAdelanteButtonListener(ActionListener listener){this.adelanteButton.addActionListener(listener);}
 
     public void removeButton3Listener(){
         for(ActionListener listener : this.button3.getActionListeners()){

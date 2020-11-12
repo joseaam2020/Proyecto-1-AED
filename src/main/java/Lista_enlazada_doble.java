@@ -7,6 +7,10 @@ public class Lista_enlazada_doble {
         this.tail = null;
     }
 
+    public Nodo_3 getTail() {
+        return tail;
+    }
+
     public boolean estaVacia(){
         return this.head == null;
     }
