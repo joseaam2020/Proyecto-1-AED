@@ -32,9 +32,17 @@ public class User{
     }
 
     public void setMana(int Mana) {
-        this.mana = Mana;
+        if (Mana >= 1000){
+            this.mana = 1000;
+        } else {
+            this.mana = Mana;
+        }
     }
     public void setVida(int Vida) {
-        this.vida = Vida;
+        if (Vida >= 1000){
+            this.vida = 1000;
+        } else{
+            this.vida = Vida;
+        }
     }
 }

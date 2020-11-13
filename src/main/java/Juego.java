@@ -284,8 +284,8 @@ class PanelJuego extends JPanel{
                                             0,
                                             null).makeJsonCode());
                                     enviar.actionPerformed(new ActionEvent(new Object(), 0, "do"));
-                                } else if(jsonRecibido.get("carta").asInt() == 15){
-                                    Nodo_1 nodoActual = todasCartas.getPosicion(14);
+                                } else if(jsonRecibido.get("carta").asInt() == 16){
+                                    Nodo_1 nodoActual = todasCartas.getPosicion(15);
                                     Carta cartaActual = (Carta) nodoActual.getDato();
                                     setJuego.insertarHistorial(stranger.getNombre(),cartaActual);
                                     setJuego.mostarHistorial(setJuego.getHistorial().getTail());
@@ -481,23 +481,75 @@ class PanelJuego extends JPanel{
                                     int costo = carta.getCosto();
                                     int userMana = newUser.getMana();
                                     if(costo <= userMana){
-                                        Enviar enviar = new Enviar(carta.makeJsonCode());
-                                        enviar.actionPerformed(e);
-                                        newUser.setMana(userMana - costo);
-                                        setJuego.insertarHistorial(newUser.getNombre(),carta);
-                                        setJuego.mostarHistorial(setJuego.getHistorial().getTail());
-                                        setJuego.eliminarCartaMano(carta);
-                                        Nodo_2 nodoactual = setJuego.getNodo_carta();
-                                        nodoactual = nodoactual.next;
-                                        setJuego.setNodo_carta(nodoactual);
-                                        setJuego.setinterfazCartas();
-                                        System.out.println("Acabo Turno");
-                                        float newMana = (float) (newUser.getMana() * 1.25);
-                                        newUser.setMana((int) newMana);
-                                        setJuego.setIntMana(newUser.getMana());
-                                        Enviar usuario = new Enviar(newUser.makeJsonString());
-                                        usuario.actionPerformed(e);
-                                        setEnTurno(false);
+                                        if (carta.getCodigo() == 14){
+                                            setJuego.removeButton3Listener();
+                                            Nodo_2 nodo = setJuego.getNodo_carta();
+                                            nodo = nodo.next;
+                                            setJuego.setNodo_carta(nodo);
+                                            setJuego.eliminarCartaMano(carta);
+                                            setJuego.insertarHistorial(newUser.getNombre(),carta);
+                                            setJuego.mostarHistorial(setJuego.getHistorial().getTail());
+                                            setJuego.getCartasSupremas().agregar_nodo(carta);
+                                            updateUI();
+                                            setJuego.setButton3Listener(new ActionListener() {
+                                                @Override
+                                                public void actionPerformed(ActionEvent e) {
+                                                    Nodo_2 nodo = setJuego.getNodo_carta();
+                                                    Carta cartaNueva = nodo.getCarta_en_mano();
+                                                    nodo = nodo.next;
+                                                    setJuego.setNodo_carta(nodo);
+                                                    setJuego.getCartasSupremas().agregar_nodo(cartaNueva);
+                                                    setJuego.eliminarCartaMano(cartaNueva);
+                                                    updateUI();
+                                                    if (setJuego.getCartasSupremas().getLista_size() >= 4){
+                                                        for(int i = 0; i < 4; i++){
+                                                            Nodo_1 nodoSupremo = setJuego.getCartasSupremas().getPosicion(i);
+                                                            Carta cartaSuprema = (Carta) nodoSupremo.getDato();
+                                                            setJuego.insertarHistorial(newUser.getNombre(),cartaSuprema);
+                                                            setJuego.mostarHistorial(setJuego.getHistorial().getTail());
+                                                            Enviar enviar = new Enviar(cartaSuprema.makeJsonCode());
+                                                            enviar.actionPerformed(e);
+                                                        }
+                                                        int deck = setJuego.getDeck().getCarta_nueva();
+                                                        if (deck != 0){
+                                                            int intCarta = deck;
+                                                            Nodo_1 nodoCarta = todasCartas.getPosicion(intCarta);
+                                                            Carta carta = (Carta) nodoCarta.getDato();
+                                                            setJuego.getMano().insertar(carta);
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        } else{
+                                            if (carta.getCodigo() == 17){
+                                                int sumaVida = (int) (Math.random() * 500);
+                                                newUser.setVida(newUser.getVida() + sumaVida);
+                                                setJuego.setIntVida(newUser.getVida());
+                                                updateUI();
+                                            } else if (carta.getCodigo() == 15){
+                                                newUser.setMana(newUser.getMana() * 4);
+                                                setJuego.setIntMana(newUser.getMana());
+                                                userMana = newUser.getMana();
+                                                updateUI();
+                                            }
+                                            Enviar enviar = new Enviar(carta.makeJsonCode());
+                                            enviar.actionPerformed(e);
+                                            newUser.setMana(userMana - costo);
+                                            setJuego.insertarHistorial(newUser.getNombre(),carta);
+                                            setJuego.mostarHistorial(setJuego.getHistorial().getTail());
+                                            setJuego.eliminarCartaMano(carta);
+                                            Nodo_2 nodoactual = setJuego.getNodo_carta();
+                                            nodoactual = nodoactual.next;
+                                            setJuego.setNodo_carta(nodoactual);
+                                            setJuego.setinterfazCartas();
+                                            System.out.println("Acabo Turno");
+                                            float newMana = (float) (newUser.getMana() * 1.25);
+                                            newUser.setMana((int) newMana);
+                                            setJuego.setIntMana(newUser.getMana());
+                                            Enviar usuario = new Enviar(newUser.makeJsonString());
+                                            usuario.actionPerformed(e);
+                                            setEnTurno(false);
+                                        }
                                     }
                                 }
                             });
@@ -542,7 +594,6 @@ class PanelJuego extends JPanel{
         }; turno.execute();
 
     }
-
 
     public String preguntarNombre(){
         fdialogo = new JFrame();

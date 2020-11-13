@@ -39,6 +39,11 @@ public class FormJuego extends JPanel {
     volatile private lista_circular mano;
     volatile private Lista_enlazada_doble historial;
     volatile private Nodo_3 registro;
+    volatile private lista_enlazada_simple CartasSupremas = new lista_enlazada_simple();
+
+    public lista_enlazada_simple getCartasSupremas() {
+        return CartasSupremas;
+    }
 
     public FormJuego() {
         this.setSize(600,600);
