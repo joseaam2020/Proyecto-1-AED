@@ -298,6 +298,26 @@ class PanelJuego extends JPanel{
                                     setJuego.eliminarCartaMano(carta);
                                     Enviar enviar = new Enviar(json);
                                     enviar.actionPerformed(new ActionEvent(new Object(), 0, "do"));
+                                } else if (jsonRecibido.get("carta").asInt() == 13){
+                                    Nodo_1 nodoActual = todasCartas.getPosicion(12);
+                                    Carta cartaActual = (Carta) nodoActual.getDato();
+                                    setJuego.insertarHistorial(stranger.getNombre(),cartaActual);
+                                    setJuego.mostarHistorial(setJuego.getHistorial().getTail());
+                                    int mana = newUser.getMana();
+                                    newUser.setMana((int) mana/2);
+                                    setJuego.setIntMana(newUser.getMana());
+                                    setEnTurno(true);
+                                    updateUI();
+                                } else if (jsonRecibido.get("carta").asInt() == 18){
+                                    Nodo_1 nodoActual = todasCartas.getPosicion(17);
+                                    Carta cartaActual = (Carta) nodoActual.getDato();
+                                    setJuego.insertarHistorial(stranger.getNombre(),cartaActual);
+                                    setJuego.mostarHistorial(setJuego.getHistorial().getTail());
+                                    int vida = newUser.getVida();
+                                    newUser.setVida((int) vida/3);
+                                    setJuego.setIntVida(newUser.getVida());
+                                    setEnTurno(true);
+                                    updateUI();
                                 } else {
                                     int size = todasCartas.getLista_size();
                                     for(int i = 0; i < size; i++){
@@ -325,6 +345,13 @@ class PanelJuego extends JPanel{
                                     int codigoRecibido = jsonRecibido.get("carta").asInt();
                                     if(codigoCarta == codigoRecibido && newUser != null && setJuego != null){
                                         setJuego.getMano().insertar(cartaActual);
+                                        Enviar enviar = new Enviar(Carta.armar_carta(
+                                                31,
+                                                0,
+                                                "null",
+                                                0,
+                                                null).makeJsonCode());
+                                        enviar.actionPerformed(new ActionEvent(new Object(), 0, "do"));
                                     }
                                 }
                             }
@@ -477,9 +504,9 @@ class PanelJuego extends JPanel{
                             setJuego.setButton4Listener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                    Baraja deck = setJuego.getDeck();
-                                    if (deck != null){
-                                        int intCarta = deck.getCarta_nueva();
+                                    int deck = setJuego.getDeck().getCarta_nueva();
+                                    if (deck != 0){
+                                        int intCarta = deck;
                                         Nodo_1 nodoCarta = todasCartas.getPosicion(intCarta);
                                         Carta carta = (Carta) nodoCarta.getDato();
                                         setJuego.getMano().insertar(carta);

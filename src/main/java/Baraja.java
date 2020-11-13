@@ -1,3 +1,4 @@
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 public class Baraja {
@@ -29,8 +30,12 @@ public class Baraja {
         return baraja;
     }
     public int getCarta_nueva() {
-        int num = Integer.parseInt(baraja.pop().toString());
-        return num;
+        try{
+            int num = Integer.parseInt(baraja.pop().toString());
+            return num;
+        } catch (EmptyStackException e){
+            return 0;
+        }
     }
 
 }
