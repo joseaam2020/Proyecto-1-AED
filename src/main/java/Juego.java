@@ -55,7 +55,7 @@ class PanelJuego extends JPanel{
     private User newUser = null;
     private User stranger;
     private lista_enlazada_simple todasCartas = null;
-    volatile private FormJuego setJuego = null;
+    volatile private FormJuego setJuego = new FormJuego();
     volatile private boolean enTurno = false;
     private boolean esAnfitrion = false;
 
@@ -280,6 +280,8 @@ class PanelJuego extends JPanel{
                                     if(codigoCarta == codigoRecibido && newUser != null && setJuego != null){
                                         newUser.setVida(newUser.getVida() - cartaActual.getDamage());
                                         setJuego.setIntVida(newUser.getVida());
+                                        setJuego.insertarHistorial(stranger.getNombre(),cartaActual);
+                                        setJuego.mostarHistorial(setJuego.getHistorial().getTail());
                                         setEnTurno(true);
                                         updateUI();
                                     }
@@ -292,6 +294,9 @@ class PanelJuego extends JPanel{
                             stranger = new User(jsonRecibido.get("usuario").asText());
                             stranger.setVida(jsonRecibido.get("vida").asInt());
                             stranger.setMana(jsonRecibido.get("mana").asInt());
+                            setJuego.setInvitado(stranger.getNombre());
+                            setJuego.setIntVidaInvitado(stranger.getVida());
+                            setJuego.setIntManaInvitado(stranger.getMana());
                             if(!enJuego){
                                 enJuego = true;
                                 if(!esAnfitrion){
@@ -329,7 +334,7 @@ class PanelJuego extends JPanel{
                 todasCartas = Carta.cargarImagenes();
                 Baraja deck = new Baraja();
                 removeAll();
-                setJuego = new FormJuego();
+                //setJuego = new FormJuego();
                 int cont = 0;
 
                 final lista_circular mano = new lista_circular();
@@ -347,14 +352,11 @@ class PanelJuego extends JPanel{
                 setJuego.setDeck(deck);
                 setJuego.setMano(mano);
 
-                setJuego.setButton3Icon(actual.getImage());
+                setJuego.setinterfazCartas();
                 setJuego.setAnfitrion(newUser.getNombre());
                 setJuego.setIntVida(newUser.getVida());
                 setJuego.setIntMana(newUser.getMana());
-                setJuego.setInvitado(stranger.getNombre());
-                setJuego.setIntVidaInvitado(stranger.getVida());
-                setJuego.setIntManaInvitado(stranger.getMana());
-                setJuego.setNodo_carta(pop);
+
                 setJuego.setButton2Listener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -362,7 +364,7 @@ class PanelJuego extends JPanel{
                         nodoactual = nodoactual.next;
                         setJuego.setNodo_carta(nodoactual);
                         Carta carta = nodoactual.getCarta_en_mano();
-                        setJuego.setButton3Icon(carta.getImage());
+                        setJuego.setinterfazCartas();
                         updateUI();
                     }
                 });
@@ -372,9 +374,26 @@ class PanelJuego extends JPanel{
                         Nodo_2 nodoactual = setJuego.getNodo_carta();
                         nodoactual = nodoactual.prev;
                         setJuego.setNodo_carta(nodoactual);
-                        Carta carta = nodoactual.getCarta_en_mano();
-                        setJuego.setButton3Icon(carta.getImage());
+                        setJuego.setinterfazCartas();
                         updateUI();
+                    }
+                });
+                setJuego.setAdelanteButtonListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Nodo_3 registro = setJuego.getRegistro().getNext();
+                        if (registro != null){
+                            setJuego.mostarHistorial(registro);
+                        }
+                    }
+                });
+                setJuego.setAtrasButtonListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Nodo_3 registro = setJuego.getRegistro().getPrev();
+                        if (registro != null){
+                            setJuego.mostarHistorial(registro);
+                        }
                     }
                 });
                 add(setJuego);
@@ -390,15 +409,27 @@ class PanelJuego extends JPanel{
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
                                     Carta carta = setJuego.getNodo_carta().getCarta_en_mano();
-                                    Enviar enviar = new Enviar(carta.makeJsonCode());
-                                    enviar.actionPerformed(e);
-                                }
-                            });
-                            setJuego.setButton3Listener(new ActionListener() {
-                                @Override
-                                public void actionPerformed(ActionEvent e) {
-                                    System.out.println("Acabo Turno");
-                                    setEnTurno(false);
+                                    int costo = carta.getCosto();
+                                    int userMana = newUser.getMana();
+                                    if(costo <= userMana){
+                                        Enviar enviar = new Enviar(carta.makeJsonCode());
+                                        enviar.actionPerformed(e);
+                                        newUser.setMana(userMana - costo);
+                                        setJuego.insertarHistorial(newUser.getNombre(),carta);
+                                        setJuego.mostarHistorial(setJuego.getHistorial().getTail());
+                                        setJuego.eliminarCartaMano(carta);
+                                        Nodo_2 nodoactual = setJuego.getNodo_carta();
+                                        nodoactual = nodoactual.next;
+                                        setJuego.setNodo_carta(nodoactual);
+                                        setJuego.setinterfazCartas();
+                                        System.out.println("Acabo Turno");
+                                        float newMana = (float) (newUser.getMana() * 1.25);
+                                        newUser.setMana((int) newMana);
+                                        setJuego.setIntMana(newUser.getMana());
+                                        Enviar usuario = new Enviar(newUser.makeJsonString());
+                                        usuario.actionPerformed(e);
+                                        setEnTurno(false);
+                                    }
                                 }
                             });
                             setJuego.setButton4Listener(new ActionListener() {
@@ -416,9 +447,15 @@ class PanelJuego extends JPanel{
                                 public void actionPerformed(ActionEvent e) {
                                     Enviar enviar = new Enviar(Carta.armar_carta(31,0,"null",0,null).makeJsonCode());
                                     enviar.actionPerformed(e);
+                                    float newMana = (float) (newUser.getMana() * 1.25);
+                                    newUser.setMana((int) newMana);
+                                    setJuego.setIntMana(newUser.getMana());
+                                    Enviar usuario = new Enviar(newUser.makeJsonString());
+                                    usuario.actionPerformed(e);
                                     setEnTurno(false);
                                 }
                             });
+
                         } else {
                             System.out.println("Se quita funcionalidad");
                             setJuego.removeButton3Listener();

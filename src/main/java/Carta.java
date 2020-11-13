@@ -12,17 +12,24 @@ public class Carta {
     String tipo;
     int nivel;
     Icon image;
+    int costo;
 
     public static Carta armar_carta(int codigo, int damage, String tipo, int nivel, Icon icon ){
         Carta carta = new Carta();
         carta.nivel = nivel;
         carta.codigo = codigo;
-        carta.damage = damage;
+        carta.damage = damage * nivel;
         carta.tipo = tipo;
         carta.image = icon;
+        if (carta.damage != 0){
+            carta.costo = carta.damage / 2;
+        } else{
+            carta.costo = 150;
+        }
         return carta;
     }
 
+    public int getCosto(){return costo;}
     public Icon getImage() {
         return image;
     }
@@ -58,6 +65,7 @@ public class Carta {
         this.tipo = tipo;
     }
 
+
     /**
      * Carga toda las imagenes de images en Cartas, dandoles sus atributos respectivos
      *
@@ -76,12 +84,6 @@ public class Carta {
             int damage;
             int nivel = 0;
             switch (propiedades[0]) {
-                case "hechizo sanación":
-                    damage = 0;
-                    break;
-                case "huevo":
-                    damage = 0;
-                    break;
                 case "stickman":
                     damage = 60;
                     break;
