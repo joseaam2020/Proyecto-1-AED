@@ -381,6 +381,26 @@ class PanelJuego extends JPanel{
                                     setEnTurno(true);
                                 }
                             }
+                        }
+                        if (jsonRecibido.has("ganaste")){
+                            fdialogo = new JFrame();
+                            dialogo = new JDialog(fdialogo, "Perdiste", true);
+                            dialogo.setLayout(new FlowLayout());
+                            nombre = new JLabel("Ganaste :)");
+                            enter = new JButton("Cerrar");
+                            enter.addActionListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    dialogo.setVisible(false);
+                                }
+                            });
+                            dialogo.add(nombre);
+                            dialogo.add(enter);
+                            dialogo.setSize(200,200);
+                            dialogo.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                            dialogo.setLocationRelativeTo(setJuego);
+                            dialogo.setVisible(true);
+                            setLayout(new BorderLayout(10,100));
                         } jsonRecibido = null;
                     }
                 } catch (IOException e) {
@@ -482,9 +502,30 @@ class PanelJuego extends JPanel{
                     if (enTurnoActual != enTurno) {
                         enTurnoActual = enTurno;
                         if (enTurno) {
+                            if(newUser.getVida() <= 0){
+                                fdialogo = new JFrame();
+                                dialogo = new JDialog(fdialogo, "Perdiste", true);
+                                dialogo.setLayout(new FlowLayout());
+                                nombre = new JLabel("Perdiste :(");
+                                enter = new JButton("Cerrar");
+                                enter.addActionListener(new ActionListener() {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        dialogo.setVisible(false);
+                                    }
+                                });
+                                dialogo.add(nombre);
+                                dialogo.add(enter);
+                                dialogo.setSize(200,200);
+                                dialogo.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                                dialogo.setLocationRelativeTo(setJuego);
+                                dialogo.setVisible(true);
+                                setLayout(new BorderLayout(10,100));
+                                Enviar enviar = new Enviar("{\"ganaste\":true}");
+                                enviar.actionPerformed(new ActionEvent(new Object(), 0, "do"));
+                            }
                             System.out.println("Empieza Turno");
                             setJuego.setButton3Listener(new ActionListener() {
-
 
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
