@@ -126,4 +126,9 @@ public class Carta {
         String jsonCode = "{ \"carta\" :" + this.codigo + "}";
         return jsonCode;
     }
+
+    public String makeJsonCodeRobada(){
+        String jsonCode = "{ \"carta\" :" + this.codigo + ",\"robada\" :" + "true}";
+        return jsonCode;
+    }
 }

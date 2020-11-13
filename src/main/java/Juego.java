@@ -270,7 +270,53 @@ class PanelJuego extends JPanel{
                             puertoAjeno = jsonRecibido.get("port").asInt();
                         }
                         if(jsonRecibido.has("carta")){
-                            if(todasCartas != null && jsonRecibido.get("carta").asInt() != 31){
+                            if(todasCartas != null && jsonRecibido.get("carta").asInt() != 31 && !jsonRecibido.has("robada")){
+                                System.out.println(jsonRecibido.get("carta").asInt());
+                                if (jsonRecibido.get("carta").asInt() == 12){
+                                    Nodo_1 nodoActual = todasCartas.getPosicion(11);
+                                    Carta cartaActual = (Carta) nodoActual.getDato();
+                                    setJuego.insertarHistorial(stranger.getNombre(),cartaActual);
+                                    setJuego.mostarHistorial(setJuego.getHistorial().getTail());
+                                    Enviar enviar = new Enviar(Carta.armar_carta(
+                                            31,
+                                            0,
+                                            "null",
+                                            0,
+                                            null).makeJsonCode());
+                                    enviar.actionPerformed(new ActionEvent(new Object(), 0, "do"));
+                                } else if(jsonRecibido.get("carta").asInt() == 15){
+                                    Nodo_1 nodoActual = todasCartas.getPosicion(14);
+                                    Carta cartaActual = (Carta) nodoActual.getDato();
+                                    setJuego.insertarHistorial(stranger.getNombre(),cartaActual);
+                                    setJuego.mostarHistorial(setJuego.getHistorial().getTail());
+                                    Nodo_2 nodo = setJuego.getNodo_carta();
+                                    Nodo_2 nuevonodo = nodo.next;
+                                    setJuego.setNodo_carta(nuevonodo);
+                                    setJuego.setinterfazCartas();
+                                    Carta carta = nodo.getCarta_en_mano();
+                                    String json = carta.makeJsonCodeRobada();
+                                    setJuego.eliminarCartaMano(carta);
+                                    Enviar enviar = new Enviar(json);
+                                    enviar.actionPerformed(new ActionEvent(new Object(), 0, "do"));
+                                } else {
+                                    int size = todasCartas.getLista_size();
+                                    for(int i = 0; i < size; i++){
+                                        Nodo_1 nodoActual = todasCartas.getPosicion(i);
+                                        Carta cartaActual = (Carta) nodoActual.getDato();
+                                        int codigoCarta = cartaActual.getCodigo();
+                                        int codigoRecibido = jsonRecibido.get("carta").asInt();
+                                        if(codigoCarta == codigoRecibido && newUser != null && setJuego != null){
+                                            newUser.setVida(newUser.getVida() - cartaActual.getDamage());
+                                            setJuego.setIntVida(newUser.getVida());
+                                            setJuego.insertarHistorial(stranger.getNombre(),cartaActual);
+                                            setJuego.mostarHistorial(setJuego.getHistorial().getTail());
+                                            setEnTurno(true);
+                                            updateUI();
+                                        }
+                                    }
+                                }
+
+                            } else if (jsonRecibido.has("robada")){
                                 int size = todasCartas.getLista_size();
                                 for(int i = 0; i < size; i++){
                                     Nodo_1 nodoActual = todasCartas.getPosicion(i);
@@ -278,15 +324,11 @@ class PanelJuego extends JPanel{
                                     int codigoCarta = cartaActual.getCodigo();
                                     int codigoRecibido = jsonRecibido.get("carta").asInt();
                                     if(codigoCarta == codigoRecibido && newUser != null && setJuego != null){
-                                        newUser.setVida(newUser.getVida() - cartaActual.getDamage());
-                                        setJuego.setIntVida(newUser.getVida());
-                                        setJuego.insertarHistorial(stranger.getNombre(),cartaActual);
-                                        setJuego.mostarHistorial(setJuego.getHistorial().getTail());
-                                        setEnTurno(true);
-                                        updateUI();
+                                        setJuego.getMano().insertar(cartaActual);
                                     }
                                 }
-                            } else{
+                            }
+                            else{
                                 setEnTurno(true);
                             }
                         }
@@ -435,11 +477,14 @@ class PanelJuego extends JPanel{
                             setJuego.setButton4Listener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                    int intCarta = setJuego.getDeck().getCarta_nueva();
-                                    Nodo_1 nodoCarta = todasCartas.getPosicion(intCarta);
-                                    Carta carta = (Carta) nodoCarta.getDato();
-                                    setJuego.getMano().insertar(carta);
-                                    setJuego.removeButton4Listener();
+                                    Baraja deck = setJuego.getDeck();
+                                    if (deck != null){
+                                        int intCarta = deck.getCarta_nueva();
+                                        Nodo_1 nodoCarta = todasCartas.getPosicion(intCarta);
+                                        Carta carta = (Carta) nodoCarta.getDato();
+                                        setJuego.getMano().insertar(carta);
+                                        setJuego.removeButton4Listener();
+                                    }
                                 }
                             });
                             setJuego.setSaltarListener(new ActionListener() {
