@@ -93,6 +93,12 @@ public class Carta {
             int damage;
             int nivel = 0;
             switch (propiedades[0]) {
+                case "monster energy":
+                    damage = 100;
+                    break;
+                case "huevo":
+                    damage = 50;
+                    break;
                 case "stickman":
                     damage = 60;
                     break;
@@ -138,6 +144,11 @@ public class Carta {
 
     public String makeJsonCodeRobada(){
         String jsonCode = "{ \"carta\" :" + this.codigo + ",\"robada\" :" + "true}";
+        return jsonCode;
+    }
+
+    public String makeJsonCodeSecreta(){
+        String jsonCode = "{ \"carta\" :" + this.codigo + ",\"secreta\" :" + this.getDamage() +"}";
         return jsonCode;
     }
 }

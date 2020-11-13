@@ -40,6 +40,28 @@ public class FormJuego extends JPanel {
     volatile private Lista_enlazada_doble historial;
     volatile private Nodo_3 registro;
     volatile private lista_enlazada_simple CartasSupremas = new lista_enlazada_simple();
+    volatile private boolean dragon = false;
+    volatile private boolean secreto = false;
+    volatile private int damageSecreto;
+
+    public int getDamageSecreto() {
+        return damageSecreto;
+    }
+    public void setDamageSecreto(int damageSecreto) {
+        this.damageSecreto = damageSecreto;
+    }
+    public boolean isDragon() {
+        return dragon;
+    }
+    public void setDragon(boolean dragon) {
+        this.dragon = dragon;
+    }
+    public boolean isSecreto() {
+        return secreto;
+    }
+    public void setSecreto(boolean secreto) {
+        this.secreto = secreto;
+    }
 
     public lista_enlazada_simple getCartasSupremas() {
         return CartasSupremas;

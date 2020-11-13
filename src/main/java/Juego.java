@@ -326,7 +326,15 @@ class PanelJuego extends JPanel{
                                         int codigoCarta = cartaActual.getCodigo();
                                         int codigoRecibido = jsonRecibido.get("carta").asInt();
                                         if(codigoCarta == codigoRecibido && newUser != null && setJuego != null){
-                                            newUser.setVida(newUser.getVida() - cartaActual.getDamage());
+                                            int damage = cartaActual.getDamage();
+                                            if (cartaActual.getTipo().equals("dragon") || cartaActual.getTipo().equals("stickman") || cartaActual.getTipo().equals("huevo") || cartaActual.getTipo().equals("monster energy")){
+                                                damage = 0;
+                                                System.out.println(cartaActual.getTipo());
+                                            }
+                                            if (jsonRecibido.has("secreta")){
+                                                damage = jsonRecibido.get("secreta").asInt();
+                                            }
+                                            newUser.setVida(newUser.getVida() - damage);
                                             setJuego.setIntVida(newUser.getVida());
                                             setJuego.insertarHistorial(stranger.getNombre(),cartaActual);
                                             setJuego.mostarHistorial(setJuego.getHistorial().getTail());
@@ -469,18 +477,43 @@ class PanelJuego extends JPanel{
                 updateUI();
                 boolean enTurnoActual = false;
                 System.out.println(enTurnoActual);
+
                 while(true) {
                     if (enTurnoActual != enTurno) {
                         enTurnoActual = enTurno;
                         if (enTurno) {
                             System.out.println("Empieza Turno");
                             setJuego.setButton3Listener(new ActionListener() {
+
+
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
                                     Carta carta = setJuego.getNodo_carta().getCarta_en_mano();
                                     int costo = carta.getCosto();
                                     int userMana = newUser.getMana();
+                                    boolean secreta = false;
+                                    int damageInicial = 0;
                                     if(costo <= userMana){
+                                        if (setJuego.isDragon()){
+                                            System.out.println("entro");
+                                            if (carta.getTipo().equals("mago") || carta.getTipo().equals("bruja")){
+                                                damageInicial = carta.getDamage();
+                                                carta.setDamage(carta.getDamage() + setJuego.getDamageSecreto());
+                                                setJuego.setDragon(false);
+                                                secreta = true;
+                                                System.out.println("sumo");
+                                            }
+                                        }
+                                        if  (setJuego.isSecreto()){
+                                            System.out.println("entro");
+                                            if (!(carta.getTipo().equals("mago") || carta.getTipo().equals("bruja"))){
+                                                damageInicial = carta.getDamage();
+                                                carta.setDamage(carta.getDamage() + setJuego.getDamageSecreto());
+                                                setJuego.setSecreto(false);
+                                                secreta = true;
+                                                System.out.println("sumo");
+                                            }
+                                        }
                                         if (carta.getCodigo() == 14){
                                             setJuego.removeButton3Listener();
                                             Nodo_2 nodo = setJuego.getNodo_carta();
@@ -490,6 +523,7 @@ class PanelJuego extends JPanel{
                                             setJuego.insertarHistorial(newUser.getNombre(),carta);
                                             setJuego.mostarHistorial(setJuego.getHistorial().getTail());
                                             setJuego.getCartasSupremas().agregar_nodo(carta);
+                                            setJuego.setinterfazCartas();
                                             updateUI();
                                             setJuego.setButton3Listener(new ActionListener() {
                                                 @Override
@@ -500,6 +534,7 @@ class PanelJuego extends JPanel{
                                                     setJuego.setNodo_carta(nodo);
                                                     setJuego.getCartasSupremas().agregar_nodo(cartaNueva);
                                                     setJuego.eliminarCartaMano(cartaNueva);
+                                                    setJuego.setinterfazCartas();
                                                     updateUI();
                                                     if (setJuego.getCartasSupremas().getLista_size() >= 4){
                                                         for(int i = 0; i < 4; i++){
@@ -521,34 +556,84 @@ class PanelJuego extends JPanel{
                                                 }
                                             });
                                         } else{
-                                            if (carta.getCodigo() == 17){
-                                                int sumaVida = (int) (Math.random() * 500);
-                                                newUser.setVida(newUser.getVida() + sumaVida);
-                                                setJuego.setIntVida(newUser.getVida());
-                                                updateUI();
-                                            } else if (carta.getCodigo() == 15){
-                                                newUser.setMana(newUser.getMana() * 4);
-                                                setJuego.setIntMana(newUser.getMana());
-                                                userMana = newUser.getMana();
-                                                updateUI();
-                                            }
-                                            Enviar enviar = new Enviar(carta.makeJsonCode());
-                                            enviar.actionPerformed(e);
-                                            newUser.setMana(userMana - costo);
-                                            setJuego.insertarHistorial(newUser.getNombre(),carta);
-                                            setJuego.mostarHistorial(setJuego.getHistorial().getTail());
-                                            setJuego.eliminarCartaMano(carta);
-                                            Nodo_2 nodoactual = setJuego.getNodo_carta();
-                                            nodoactual = nodoactual.next;
-                                            setJuego.setNodo_carta(nodoactual);
-                                            setJuego.setinterfazCartas();
-                                            System.out.println("Acabo Turno");
-                                            float newMana = (float) (newUser.getMana() * 1.25);
-                                            newUser.setMana((int) newMana);
-                                            setJuego.setIntMana(newUser.getMana());
-                                            Enviar usuario = new Enviar(newUser.makeJsonString());
-                                            usuario.actionPerformed(e);
-                                            setEnTurno(false);
+                                             if (carta.getTipo().equals("dragon")){
+                                                 setJuego.setDragon(true);
+                                                 setJuego.setDamageSecreto(carta.getDamage());
+                                                 Enviar enviar = new Enviar(carta.makeJsonCode());
+                                                 enviar.actionPerformed(e);
+                                                 newUser.setMana(userMana - costo);
+                                                 setJuego.insertarHistorial(newUser.getNombre(),carta);
+                                                 setJuego.mostarHistorial(setJuego.getHistorial().getTail());
+                                                 setJuego.eliminarCartaMano(carta);
+                                                 Nodo_2 nodoactual = setJuego.getNodo_carta();
+                                                 nodoactual = nodoactual.next;
+                                                 setJuego.setNodo_carta(nodoactual);
+                                                 setJuego.setinterfazCartas();
+                                                 System.out.println("Acabo Turno");
+                                                 float newMana = (float) (newUser.getMana() * 1.25);
+                                                 newUser.setMana((int) newMana);
+                                                 setJuego.setIntMana(newUser.getMana());
+                                                 Enviar usuario = new Enviar(newUser.makeJsonString());
+                                                 usuario.actionPerformed(e);
+                                                 setEnTurno(false);
+                                                 System.out.println("dragon");
+                                            } else if (carta.getTipo().equals("stickman") || carta.getTipo().equals("monster energy") || carta.getTipo().equals("huevo")){
+                                                 setJuego.setSecreto(true);
+                                                 setJuego.setDamageSecreto(carta.getDamage());
+                                                 Enviar enviar = new Enviar(carta.makeJsonCode());
+                                                 enviar.actionPerformed(e);
+                                                 newUser.setMana(userMana - costo);
+                                                 setJuego.insertarHistorial(newUser.getNombre(),carta);
+                                                 setJuego.mostarHistorial(setJuego.getHistorial().getTail());
+                                                 setJuego.eliminarCartaMano(carta);
+                                                 Nodo_2 nodoactual = setJuego.getNodo_carta();
+                                                 nodoactual = nodoactual.next;
+                                                 setJuego.setNodo_carta(nodoactual);
+                                                 setJuego.setinterfazCartas();
+                                                 System.out.println("Acabo Turno");
+                                                 float newMana = (float) (newUser.getMana() * 1.25);
+                                                 newUser.setMana((int) newMana);
+                                                 setJuego.setIntMana(newUser.getMana());
+                                                 Enviar usuario = new Enviar(newUser.makeJsonString());
+                                                 usuario.actionPerformed(e);
+                                                 setEnTurno(false);
+                                                 System.out.println("secreto");
+                                            } else {
+                                                 if (carta.getCodigo() == 17){
+                                                     int sumaVida = (int) (Math.random() * 500);
+                                                     newUser.setVida(newUser.getVida() + sumaVida);
+                                                     setJuego.setIntVida(newUser.getVida());
+                                                     updateUI();
+                                                 } else if (carta.getCodigo() == 15) {
+                                                     newUser.setMana(newUser.getMana() * 4);
+                                                     setJuego.setIntMana(newUser.getMana());
+                                                     userMana = newUser.getMana();
+                                                     updateUI();
+                                                 }
+                                                     if (secreta){
+                                                         Enviar enviar = new Enviar(carta.makeJsonCodeSecreta());
+                                                         enviar.actionPerformed(e);
+                                                         carta.setDamage(damageInicial);
+                                                     }else{
+                                                         Enviar enviar = new Enviar(carta.makeJsonCode());
+                                                         enviar.actionPerformed(e);
+                                                     }
+                                                     newUser.setMana(userMana - costo);
+                                                     setJuego.insertarHistorial(newUser.getNombre(),carta);
+                                                     setJuego.mostarHistorial(setJuego.getHistorial().getTail());
+                                                     setJuego.eliminarCartaMano(carta);
+                                                     Nodo_2 nodoactual = setJuego.getNodo_carta();
+                                                     nodoactual = nodoactual.next;
+                                                     setJuego.setNodo_carta(nodoactual);
+                                                     setJuego.setinterfazCartas();
+                                                     System.out.println("Acabo Turno");
+                                                     float newMana = (float) (newUser.getMana() * 1.25);
+                                                     newUser.setMana((int) newMana);
+                                                     setJuego.setIntMana(newUser.getMana());
+                                                     Enviar usuario = new Enviar(newUser.makeJsonString());
+                                                     usuario.actionPerformed(e);
+                                                     setEnTurno(false);
+                                             }
                                         }
                                     }
                                 }
