@@ -14,6 +14,15 @@ public class Carta {
     Icon image;
     int costo;
 
+    /**
+     * Genera un objeto tipo carta para usar en juego, con sus diferentes propiedades de uso
+     * @param codigo int
+     * @param damage int
+     * @param tipo String
+     * @param nivel int
+     * @param icon Icon
+     * @return carta
+     */
     public static Carta armar_carta(int codigo, int damage, String tipo, int nivel, Icon icon ){
         Carta carta = new Carta();
         carta.nivel = nivel;

@@ -9,6 +9,10 @@ public class User{
         this.nombre = Nombre;
     }
 
+    /**
+     * Convierte toma los datos de usuario para generar archivo json
+     * @return json
+     */
     public String makeJsonString(){
         String json = ("{\"usuario\":\"" + this.nombre +"\","
                 + "\"vida\":" + this.vida + ","

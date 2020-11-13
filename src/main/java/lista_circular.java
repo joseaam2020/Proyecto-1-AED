@@ -12,6 +12,11 @@ public class lista_circular {
     }
 
     //método para ingresar carta
+
+    /**
+     * Este método ingresa el objeto tipo carta a la mano del jugador para ser usada in-game
+     * @param carta_a_ingresar Carta
+     */
     public void insertar(Carta carta_a_ingresar){
         Nodo_2 nuevo = new Nodo_2(carta_a_ingresar);
         if(carta_ult!=null){
@@ -35,6 +40,12 @@ public class lista_circular {
         carta_next = carta_ult.next;
         return carta_next;
     }
+
+    /**
+     * Método para eliminar las cartas de la mano al ser usadas o robadas
+     * @param carta_a_eliminar Carta
+     * @return encontrado
+     */
     public boolean eliminar(Carta carta_a_eliminar){
         Nodo_2 actual;
         boolean encontrado = false;
@@ -59,6 +70,6 @@ public class lista_circular {
             }
             aux=null;
         }
-        return encontrado==true;
+        return encontrado;
     }
 }

@@ -15,6 +15,10 @@ public class Lista_enlazada_doble {
         return this.head == null;
     }
 
+    /**
+     * Este método ingresa un objeto Dato a la lista enlazada doble para hacer un Nodo
+     * @param Dato Object
+     */
     public void insertar(Object Dato){
         Nodo_3 newNodo = new Nodo_3(Dato);
         if(this.estaVacia()){
