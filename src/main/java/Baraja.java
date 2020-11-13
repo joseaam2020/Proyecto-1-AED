@@ -2,6 +2,12 @@ import java.util.Stack;
 
 public class Baraja {
     Stack baraja = arma_pila();
+
+    /**
+     * Arma una pila tipo Stack con número aleatorios tomados de un array, para generar los códigos de carta
+     * que irán a la mano del jugador.
+     * @return Stack
+     */
     private Stack arma_pila() {
         Stack baraja = new Stack();
         int i = 0, cantidad = 20, rango = 30;

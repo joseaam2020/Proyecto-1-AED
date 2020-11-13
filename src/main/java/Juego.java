@@ -135,7 +135,7 @@ class PanelJuego extends JPanel{
         /**
          * Accion que ocurre al seleccionar ser invitado
          *
-         * @param e
+         * @param e ActionEvent
          */
         @Override
         public void actionPerformed(ActionEvent e) {

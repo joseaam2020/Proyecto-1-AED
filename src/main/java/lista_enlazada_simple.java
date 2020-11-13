@@ -11,7 +11,10 @@ public class lista_enlazada_simple {
     public int getLista_size() {
         return lista_size;
     }
-
+    /**
+     * Este método revisa si la lista está vacía
+     * @return boolean
+     */
     public boolean lista_vacia(){
         if(primer_nodo == null){
             return true;
@@ -19,6 +22,11 @@ public class lista_enlazada_simple {
             return false;
         }
     }
+
+    /**
+     * Método para agregar nodos a la lista simple
+     * @param dato Object
+     */
     public void agregar_nodo(Object dato){
         if(lista_vacia()){
             Nodo_1 newNodo = new Nodo_1(dato);
@@ -34,6 +42,9 @@ public class lista_enlazada_simple {
         }
     }
 
+    /**
+     * Método usado para revisión de funcionamiento
+     */
     public void print(){
         if(lista_vacia()){
             System.out.println("[]");
@@ -49,6 +60,11 @@ public class lista_enlazada_simple {
         }
     }
 
+    /**
+     * Encontrar la posición de una carta en la mano del jugador
+     * @param posicion int
+     * @return Nodoactual
+     */
     public Nodo_1 getPosicion(int posicion){
         if(posicion > this.lista_size-1){
             return null;
